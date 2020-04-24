@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation.Peers;
@@ -24,6 +25,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace GalleryExplorer
 {
@@ -33,6 +35,7 @@ namespace GalleryExplorer
     public partial class MainWindow : Window
     {
         public static MainWindow Instance;
+        DispatcherTimer timer = new DispatcherTimer();
 
         public MainWindow()
         {
@@ -52,6 +55,8 @@ namespace GalleryExplorer
             Closed += MainWindow_Closed;
 
             Instance = this;
+            timer.Interval = new TimeSpan(0, 0, 2);
+            timer.Tick += Timer_Tick;
         }
 
         #region Search Box Action
@@ -285,22 +290,77 @@ namespace GalleryExplorer
                 result.AddRange(arr_task[i].Result);
             }
 
-            var tldx = ResultList.DataContext as GalleryDataGridViewModel;
-            tldx.Items.Clear();
-            foreach (var article in result)
+            if (SearchListView.Visibility == Visibility.Visible)
             {
-                tldx.Items.Add(new GalleryDataGridItemViewModel
+                var tldx = ResultList.DataContext as GalleryDataGridViewModel;
+                tldx.Items.Clear();
+                foreach (var article in result)
                 {
-                    번호 = article.no,
-                    제목 = article.title ?? "",
-                    클래스 = article.classify ?? "",
-                    날짜 = article.date.ToString(),
-                    닉네임 = article.nick ?? "",
-                    답글 = article.replay_num ?? "",
-                    아이디 = article.uid != "" ? article.uid : $"({article.ip})",
-                    조회수 = article.count ?? "",
-                    추천수 = article.recommend ?? "",
-                });
+                    tldx.Items.Add(new GalleryDataGridItemViewModel
+                    {
+                        번호 = article.no,
+                        제목 = article.title ?? "",
+                        클래스 = article.classify ?? "",
+                        날짜 = article.date.ToString(),
+                        닉네임 = article.nick ?? "",
+                        답글 = article.replay_num ?? "",
+                        아이디 = article.uid != "" ? article.uid : $"({article.ip})",
+                        조회수 = article.count ?? "",
+                        추천수 = article.recommend ?? "",
+                    });
+                }
+            }
+            else
+            {
+                SearchMaterialPanel.Children.Clear();
+                this.result = result;
+                latest_load_count = 0;
+                wait_count = 0;
+                stay = false;
+                _ = Task.Run(() => MoreLoad());
+            }
+        }
+
+        int latest_load_count = 0;
+        int wait_count = 0;
+        bool stay = false;
+        List<DCInsidePageArticle> result;
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            stay = false;
+            wait_count = 0;
+            timer.Stop();
+        }
+
+        private void MoreLoad()
+        {
+            stay = true;
+            timer.Start();
+            for (int i = 0; i < 10 && latest_load_count < result.Count; i++, latest_load_count++)
+            {
+                int llc = latest_load_count;
+                Extends.Post(() => SearchMaterialPanel.Children.Add(new ThumbnailItem(result[llc]) { LoadComplete = DownStay }));
+                Thread.Sleep(100);
+                wait_count++;
+            }
+        }
+
+        private void DownStay()
+        {
+            if (Interlocked.Decrement(ref wait_count) <= 0)
+            {
+                wait_count = 0;
+                stay = false;
+            }
+        }
+
+        private void SearchMaterialPanelScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (SearchMaterialPanelScroll.VerticalOffset == 0 || SearchMaterialPanelScroll.ScrollableHeight == 0) return;
+            if (SearchMaterialPanelScroll.VerticalOffset == SearchMaterialPanelScroll.ScrollableHeight && !stay)
+            {
+                _ = Task.Run(() => MoreLoad());
             }
         }
 
@@ -379,6 +439,28 @@ namespace GalleryExplorer
             }
         }
 
+        private void ToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ThumbnailPanel.Visibility = Visibility.Collapsed;
+            SearchListView.Visibility = Visibility.Visible;
+        }
+
+        private void ToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            SearchListView.Visibility = Visibility.Collapsed;
+            ThumbnailPanel.Visibility = Visibility.Visible;
+        }
+
         #endregion
+
+        private void PageNumber_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PageFunction_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

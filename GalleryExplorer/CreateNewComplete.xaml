@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="GalleryExplorer.CreateNewComplete"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GalleryExplorer"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Grey.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Margin="4">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Margin="0 6 0 0" Grid.Row="0">
+
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <materialDesign:PackIcon Grid.Row="0" Kind="Check"  Height="50" Width="50" Opacity=".56" HorizontalAlignment="Center"/>
+                <TextBlock Margin="0 8 0 0" Text="완료되었습니다!" Grid.Row="1" FontSize="16" HorizontalAlignment="Center"/>
+                <TextBlock Text="열기를 통해 데이터를 불러와 주세요!" Grid.Row="2" FontSize="16" HorizontalAlignment="Center"/>
+            </Grid>
+        </Grid>
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1">
+            <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"
+                HorizontalAlignment="Right"
+                Margin="16 8 16 0"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+
+                <Button.CommandParameter>
+                    <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                        True
+                    </system:Boolean>
+                </Button.CommandParameter>
+                완료
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -224,7 +224,7 @@ namespace GalleryExplorer
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (DCGalleryAnalyzer.Instance.Articles == null)
+            if (DCGalleryAnalyzer.Instance.Model == null)
                 return;
 
             var search = SearchText.Text;

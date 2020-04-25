@@ -41,6 +41,7 @@ namespace GalleryExplorer
         {
             InitializeComponent();
 
+            TemporaryFiles.DeleteAllPreviouslyUsed();
             foreach (var page_number in PageNumberPanel.Children)
             {
                 page_number_buttons.Add(page_number as Button);
@@ -62,6 +63,11 @@ namespace GalleryExplorer
 
             Instance = this;
             timer.Interval = new TimeSpan(0, 0, 2);
+
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                Logger.Instance.PushError("unhandled: " + (e.ExceptionObject as Exception).ToString());
+            };
         }
 
         #region Search Box Action
@@ -534,5 +540,101 @@ namespace GalleryExplorer
 
         #endregion
 
+        #region Stack
+
+        public struct StackElements
+        {
+            public int selected_page;
+            public int max_page;
+            public int current_page_segment;
+            public double scroll_status;
+
+            public string search_text;
+            public DateTime? starts;
+            public DateTime? ends;
+            public bool show_bookmark;
+            public int align_row;
+            public int align_column;
+        }
+
+        List<StackElements> status_stack = new List<StackElements>();
+        int stack_pointer = -1;
+
+        private void stack_clear()
+        {
+            status_stack.Clear();
+            stack_pointer = -1;
+        }
+
+        private void stack_push()
+        {
+            if (stack_pointer >= 0 && stack_pointer != status_stack.Count - 1)
+            {
+                status_stack.RemoveRange(stack_pointer + 1, status_stack.Count - stack_pointer - 1);
+                stack_pointer = status_stack.Count - 1;
+            }
+            status_stack.Add(new StackElements
+            {
+                selected_page = selected_page,
+                max_page = max_page,
+                current_page_segment = current_page_segment,
+                scroll_status = ScrollViewer.VerticalOffset,
+
+                //align_column = align_column,
+                //align_row = align_row,
+                //search_text = latest_search_text,
+            });
+            stack_pointer++;
+        }
+
+        private void stack_back()
+        {
+            if (stack_pointer <= 0) return;
+            stack_pointer--;
+            stack_regression(stack_pointer);
+        }
+
+        private void stack_forward()
+        {
+            if (stack_pointer >= status_stack.Count - 1) return;
+            stack_pointer++;
+            stack_regression(stack_pointer);
+        }
+
+        private void stack_jump(int ptr)
+        {
+            stack_pointer = ptr;
+            stack_regression(ptr);
+        }
+
+        string latest_search = "";
+        private void stack_regression(int ptr)
+        {
+            var elem = status_stack[ptr];
+            //elems = raws;
+            //starts = elem.starts;
+            //ends = elem.ends;
+            //show_bookmark = elem.show_bookmark;
+            //align_row = elem.align_row;
+            //align_column = elem.align_column;
+            if (latest_search != elem.search_text)
+            {
+                //day_before = elems = Search(elem.search_text, raws);
+                SearchText.Text = elem.search_text;
+                latest_search = elem.search_text;
+            }
+
+            max_page = elem.max_page;
+            current_page_segment = elem.current_page_segment;
+
+            //sort_data(align_column, align_row);
+            //filter_data();
+            page_number_buttons.ForEach(x => x.Visibility = Visibility.Visible);
+            set_page_segment(current_page_segment);
+            show_page(elem.selected_page);
+            ScrollViewer.ScrollToVerticalOffset(elem.scroll_status);
+        }
+
+        #endregion
     }
 }

@@ -206,7 +206,7 @@
                         </StackPanel>
                     </ListBoxItem>
 
-                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Sort" IsEnabled="False">
+                    <ListBoxItem x:Name="SortButton" PreviewMouseUp="StackPanel_MouseDown" Tag="Sort" IsEnabled="False">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="정렬" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
                         </ListBoxItem.ToolTip>
@@ -330,7 +330,8 @@
                 </DataGrid>
             </Grid>
 
-            <Grid x:Name="ThumbnailPanel" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
+            <Grid x:Name="ThumbnailPanel" Grid.Row="1" Grid.Column="1" >
+                <!--Visibility="Collapsed"-->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -343,30 +344,40 @@
                 <Grid Grid.Row="1" Grid.Column="1" Background="#232323" Height="35" x:Name="PagerGrid">
                     <Border HorizontalAlignment="Center" CornerRadius="2" BorderThickness="0" BorderBrush="#717171" x:Name="PagerBorder">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="LeftLeft" Click="PageFunction_Click">
+                            <StackPanel.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.MergedDictionaries>
+                                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+                                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                                    </ResourceDictionary.MergedDictionaries>
+                                </ResourceDictionary>
+                            </StackPanel.Resources>
+                            
+                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="LeftLeft" Click="PageFunction_Click" Margin="0 0 2 0">
                                 <materialDesign:PackIcon Kind="ChevronDoubleLeft" Height="28" Width="28" Foreground="#717171"/>
                             </Button>
-                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="Left" Click="PageFunction_Click">
+                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="Left" Click="PageFunction_Click" Margin="0 0 2 0">
                                 <materialDesign:PackIcon Kind="ChevronLeft" Height="28" Width="28" Foreground="#717171"/>
                             </Button>
 
                             <StackPanel x:Name="PageNumberPanel" Orientation="Horizontal">
-                                <Button Tag="0" BorderBrush="#363636" Background="#808080" BorderThickness="1 0 0 0" Foreground="#171717" Content="1"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
-                                <Button Tag="1" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="2"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
-                                <Button Tag="2" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="3"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
-                                <Button Tag="3" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="4"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
-                                <Button Tag="4" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="5"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
-                                <Button Tag="5" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="6"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
-                                <Button Tag="6" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="7"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
-                                <Button Tag="7" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="8"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
-                                <Button Tag="8" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="9"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
-                                <Button Tag="9" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="10" MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="0" Margin="0 0 2 0" BorderBrush="#363636" Background="#808080" BorderThickness="1 0 0 0" Foreground="#171717" Content="1"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="1" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="2"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="2" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="3"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="3" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="4"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="4" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="5"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="5" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="6"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="6" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="7"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="7" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="8"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="8" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="9"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="9" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="10" MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
                             </StackPanel>
 
-                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="Right" Click="PageFunction_Click">
+                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="Right" Click="PageFunction_Click" Margin="0 0 2 0">
                                 <materialDesign:PackIcon Kind="ChevronRight" Height="28" Width="28" Foreground="#717171"/>
                             </Button>
-                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 1 0" Tag="RightRight" Click="PageFunction_Click">
+                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 1 0" Tag="RightRight" Click="PageFunction_Click" Margin="0 0 2 0">
                                 <materialDesign:PackIcon Kind="ChevronDoubleRight" Height="28" Width="28" Foreground="#717171"/>
                             </Button>
                         </StackPanel>

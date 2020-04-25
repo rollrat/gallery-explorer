@@ -45,7 +45,7 @@ namespace GalleryExplorer
             if (DCGalleryAnalyzer.Instance.Model.is_minor_gallery)
                 URL = $"https://gall.dcinside.com/mgallery/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
             else
-                URL = $"https://gall.dcinside.com/mgallery/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
+                URL = $"https://gall.dcinside.com/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
             //DateTime.Text = article.date.ToString();
             var upvote = article.recommend.ToInt();
             if (upvote > 0)

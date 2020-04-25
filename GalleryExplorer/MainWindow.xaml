@@ -330,7 +330,7 @@
                 </DataGrid>
             </Grid>
 
-            <Grid x:Name="ThumbnailPanel" Grid.Row="1" Grid.Column="1" >
+            <Grid x:Name="ThumbnailPanel" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
                 <!--Visibility="Collapsed"-->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>

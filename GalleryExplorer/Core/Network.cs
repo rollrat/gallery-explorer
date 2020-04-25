@@ -175,6 +175,9 @@ namespace GalleryExplorer.Core
         [JsonProperty]
         public bool NotifyOnlySize { get; set; }
 
+        [JsonProperty]
+        public bool GetStream { get; set; }
+
         /* Callback Functions */
 
         public Action<long> SizeCallback;
@@ -183,6 +186,7 @@ namespace GalleryExplorer.Core
         public Action CompleteCallback;
         public Action<string> CompleteCallbackString;
         public Action<byte[]> CompleteCallbackBytes;
+        public Action<Stream> CompleteCallbackStream;
         public Action<CookieCollection> CookieReceive;
         public Action<string> HeaderReceive;
         public Action CancleCallback;
@@ -613,6 +617,12 @@ namespace GalleryExplorer.Core
 
                         Stream istream = response.GetResponseStream();
                         Stream ostream = null;
+
+                        if (content.GetStream)
+                        {
+                            content.CompleteCallbackStream?.Invoke(istream);
+                            return;
+                        }
 
                         if (content.DownloadString || content.MemoryCache)
                         {
@@ -1066,6 +1076,39 @@ namespace GalleryExplorer.Core
                 task.CompleteCallbackBytes = (byte[] bytes) =>
                 {
                     result = bytes;
+                    interrupt.Set();
+                };
+
+                task.ErrorCallback = (code) =>
+                {
+                    task.ErrorCallback = null;
+                    interrupt.Set();
+                };
+
+                Scheduler.Add(task);
+
+                interrupt.WaitOne();
+
+                return result;
+            }).ConfigureAwait(false);
+        }
+
+        public static Stream RequestStream(string url)
+        {
+            return RequestStreamAsync(NetTask.MakeDefault(url)).Result;
+        }
+
+        public static async Task<Stream> RequestStreamAsync(NetTask task)
+        {
+            return await Task.Run(() =>
+            {
+                var interrupt = new ManualResetEvent(false);
+                Stream result = null;
+
+                task.GetStream = true;
+                task.CompleteCallbackStream = (Stream stream) =>
+                {
+                    result = stream;
                     interrupt.Set();
                 };
 

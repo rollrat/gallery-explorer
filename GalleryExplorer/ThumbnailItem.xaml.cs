@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +29,6 @@ namespace GalleryExplorer
     public partial class ThumbnailItem : UserControl
     {
         DCInsidePageArticle article;
-        public Action LoadComplete = null;
         string URL;
 
         public ThumbnailItem(DCInsidePageArticle article)
@@ -46,6 +46,7 @@ namespace GalleryExplorer
                 URL = $"https://gall.dcinside.com/mgallery/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
             else
                 URL = $"https://gall.dcinside.com/mgallery/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
+            //DateTime.Text = article.date.ToString();
             var upvote = article.recommend.ToInt();
             if (upvote > 0)
             {
@@ -116,14 +117,10 @@ namespace GalleryExplorer
                     }
                     var page = DCInsideUtils.ParseBoardView(html);
                     if (page.ImagesLink.Count == 0) return;
-                    temp_file = System.IO.Path.GetTempFileName();
+                    temp_file = TemporaryFiles.UseNew();
                     NetTools.DownloadFile(page.ImagesLink[0], temp_file);
 
-                    Extends.Post(() =>
-                    {
-                        AnimationBehavior.SetSourceUri(Image, new Uri(temp_file));
-                        LoadComplete();
-                    });
+                    Extends.Post(() => AnimationBehavior.SetSourceUri(Image, new Uri(temp_file)));
                 });
             }
         }
@@ -133,9 +130,5 @@ namespace GalleryExplorer
             System.Diagnostics.Process.Start(URL);
         }
 
-        private void Image_Loaded(DependencyObject d, AnimationCompletedEventArgs e)
-        {
-            File.Delete(temp_file);
-        }
     }
 }

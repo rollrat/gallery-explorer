@@ -206,6 +206,15 @@
                         </StackPanel>
                     </ListBoxItem>
 
+                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Sort" IsEnabled="False">
+                        <ListBoxItem.ToolTip>
+                            <ToolTip Content="정렬" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
+                        </ListBoxItem.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Sort" Height="24" Width="24" Margin="0 0 0 0"/>
+                        </StackPanel>
+                    </ListBoxItem>
+
                     <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Record" IsEnabled="False">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="기록" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
@@ -327,12 +336,12 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ScrollViewer x:Name="SearchMaterialPanelScroll" ScrollChanged="SearchMaterialPanelScroll_ScrollChanged">
+                <ScrollViewer x:Name="ScrollViewer">
                     <controls1:FallsPanel x:Name="SearchMaterialPanel"/>
                 </ScrollViewer>
 
                 <Grid Grid.Row="1" Grid.Column="1" Background="#232323" Height="35" x:Name="PagerGrid">
-                    <Border HorizontalAlignment="Center" CornerRadius="2" BorderThickness="1" BorderBrush="#717171" x:Name="PagerBorder">
+                    <Border HorizontalAlignment="Center" CornerRadius="2" BorderThickness="0" BorderBrush="#717171" x:Name="PagerBorder">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="LeftLeft" Click="PageFunction_Click">
                                 <materialDesign:PackIcon Kind="ChevronDoubleLeft" Height="28" Width="28" Foreground="#717171"/>

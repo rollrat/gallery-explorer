@@ -8,7 +8,7 @@ using System.Windows;
 // 제어됩니다. 어셈블리와 관련된 정보를 수정하려면
 // 이러한 특성 값을 변경하세요.
 [assembly: AssemblyTitle("DCInside Gallery Explorer")]
-[assembly: AssemblyDescription("디시인사이드 갤러리를 탐색할 수 있는 도구입니다.")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("DCInside Gallery Explorer")]

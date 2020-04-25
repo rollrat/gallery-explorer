@@ -41,6 +41,12 @@ namespace GalleryExplorer
         {
             InitializeComponent();
 
+            foreach (var page_number in PageNumberPanel.Children)
+            {
+                page_number_buttons.Add(page_number as Button);
+            }
+            initialize_page();
+
             SearchText.GotFocus += SearchText_GotFocus;
             SearchText.LostFocus += SearchText_LostFocus;
 
@@ -56,7 +62,6 @@ namespace GalleryExplorer
 
             Instance = this;
             timer.Interval = new TimeSpan(0, 0, 2);
-            timer.Tick += Timer_Tick;
         }
 
         #region Search Box Action
@@ -68,6 +73,7 @@ namespace GalleryExplorer
                 if (Logger.Instance.ControlEnable)
                     Core.Console.Instance.Stop();
             }
+            TemporaryFiles.DeleteAllPreviouslyUsed();
             Application.Current.Shutdown();
             Process.GetCurrentProcess().Kill();
         }
@@ -312,56 +318,28 @@ namespace GalleryExplorer
             }
             else
             {
-                SearchMaterialPanel.Children.Clear();
-                this.result = result;
-                latest_load_count = 0;
-                wait_count = 0;
-                stay = false;
-                _ = Task.Run(() => MoreLoad());
+                items = result;
+                max_page = items.Count / show_elem_per_page;
+                initialize_page();
             }
         }
 
-        int latest_load_count = 0;
-        int wait_count = 0;
-        bool stay = false;
-        List<DCInsidePageArticle> result;
-
-        private void Timer_Tick(object sender, EventArgs e)
+        List<DCInsidePageArticle> items;
+        int show_elem_per_page = 20;
+        private void show_page_impl(int page)
         {
-            stay = false;
-            wait_count = 0;
-            timer.Stop();
-        }
+            SearchMaterialPanel.Children.Clear();
+            if (items == null)
+                return;
 
-        private void MoreLoad()
-        {
-            stay = true;
-            timer.Start();
-            for (int i = 0; i < 10 && latest_load_count < result.Count; i++, latest_load_count++)
+            Task.Run(() =>
             {
-                int llc = latest_load_count;
-                Extends.Post(() => SearchMaterialPanel.Children.Add(new ThumbnailItem(result[llc]) { LoadComplete = DownStay }));
-                Thread.Sleep(100);
-                wait_count++;
-            }
-        }
-
-        private void DownStay()
-        {
-            if (Interlocked.Decrement(ref wait_count) <= 0)
-            {
-                wait_count = 0;
-                stay = false;
-            }
-        }
-
-        private void SearchMaterialPanelScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            if (SearchMaterialPanelScroll.VerticalOffset == 0 || SearchMaterialPanelScroll.ScrollableHeight == 0) return;
-            if (SearchMaterialPanelScroll.VerticalOffset == SearchMaterialPanelScroll.ScrollableHeight && !stay)
-            {
-                _ = Task.Run(() => MoreLoad());
-            }
+                for (int i = page * show_elem_per_page; i < (page + 1) * show_elem_per_page && i < items.Count; i++)
+                {
+                    Extends.Post(() => SearchMaterialPanel.Children.Add(new ThumbnailItem(items[i])));
+                    Thread.Sleep(100);
+                }
+            });
         }
 
         #endregion
@@ -453,14 +431,108 @@ namespace GalleryExplorer
 
         #endregion
 
+        #region Pager
+
+        int max_page = 0; // 1 ~ 250
+        int current_page_segment = 0;
+        int selected_page = 0;
+
+        List<Button> page_number_buttons = new List<Button>();
+
+        /// <summary>
+        /// 페이저를 초기화합니다.
+        /// </summary>
+        /// <param name="show"></param>
+        private void initialize_page(bool show = true)
+        {
+            current_page_segment = 0;
+            page_number_buttons.ForEach(x => x.Visibility = Visibility.Visible);
+            set_page_segment(0);
+            if (show) show_page(0);
+        }
+
+        /// <summary>
+        /// 특정 페이지로 이동합니다.
+        /// </summary>
+        /// <param name="i"></param>
+        private void show_page(int i)
+        {
+            page_number_buttons.ForEach(x => {
+                x.Background = new SolidColorBrush(Color.FromRgb(0x30, 0x30, 0x30));
+                x.Foreground = new SolidColorBrush(Color.FromRgb(0x71, 0x71, 0x71));
+            });
+            page_number_buttons[i % 10].Background = new SolidColorBrush(Color.FromRgb(0x80, 0x80, 0x80));
+            page_number_buttons[i % 10].Foreground = new SolidColorBrush(Color.FromRgb(0x17, 0x17, 0x17));
+
+            show_page_impl(i);
+            selected_page = i;
+
+            ScrollViewer.ScrollToTop();
+        }
+
+        /// <summary>
+        /// 페이저 세그먼트의 표시여부를 설정합니다.
+        /// </summary>
+        /// <param name="seg"></param>
+        private void set_page_segment(int seg)
+        {
+            for (int i = 0, j = current_page_segment * 10; i < 10; i++, j++)
+            {
+                page_number_buttons[i].Content = (j + 1).ToString();
+
+                if (j <= max_page)
+                    page_number_buttons[i].Visibility = Visibility.Visible;
+                else
+                    page_number_buttons[i].Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void PageNumber_Click(object sender, RoutedEventArgs e)
         {
-
+            show_page(Convert.ToInt32((string)(sender as Button).Content) - 1);
         }
 
         private void PageFunction_Click(object sender, RoutedEventArgs e)
         {
+            switch ((sender as Button).Tag.ToString())
+            {
+                case "LeftLeft":
+                    if (current_page_segment == 0) break;
 
+                    current_page_segment = 0;
+                    set_page_segment(0);
+                    show_page(0);
+                    break;
+
+                case "Left":
+                    if (current_page_segment == 0) break;
+
+                    current_page_segment--;
+                    set_page_segment(current_page_segment);
+                    show_page(current_page_segment * 10);
+                    break;
+
+                case "Right":
+                    if (max_page < 10) break;
+                    if (current_page_segment == max_page / 10) break;
+
+                    current_page_segment++;
+                    set_page_segment(current_page_segment);
+                    show_page(current_page_segment * 10);
+                    break;
+
+                case "RightRight":
+                    if (max_page < 10) break;
+                    if (current_page_segment == max_page / 10) break;
+
+                    current_page_segment = max_page / 10;
+                    set_page_segment(current_page_segment);
+                    show_page(max_page);
+                    break;
+            }
         }
+
+        #endregion
+
     }
 }

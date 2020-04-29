@@ -233,7 +233,7 @@
                         </StackPanel>
                     </ListBoxItem>
 
-                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Signal" IsEnabled="False">
+                    <ListBoxItem x:Name="SignalButton" PreviewMouseUp="StackPanel_MouseDown" Tag="Signal" IsEnabled="False">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="신호 감지기" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
                         </ListBoxItem.ToolTip>

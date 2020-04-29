@@ -421,6 +421,7 @@ namespace GalleryExplorer
 
                 DCGalleryAnalyzer.Instance.Open(ofd.FileName);
                 SyncButton.IsEnabled = true;
+                SignalButton.IsEnabled = true;
                 Button_Click(null, null);
             }
             else if (tag == "Sync")
@@ -452,6 +453,10 @@ namespace GalleryExplorer
                 Logger.Instance.ControlEnable = true;
                 Logger.Instance.Push("Welcome to DCInside Gallery Explorer!");
                 Logger.Instance.Start();
+            }
+            else if (tag == "Signal")
+            {
+                new SignalWindow().Show();
             }
             else if(tag == "Help")
             {

@@ -31,10 +31,12 @@ namespace GalleryExplorer
         DCInsidePageArticle article;
         string URL;
 
-        public ThumbnailItem(DCInsidePageArticle article)
+        public ThumbnailItem(DCInsidePageArticle article, bool r2l = false)
         {
             InitializeComponent();
 
+            if (!r2l)
+                LoadedAnimation.Actions.Clear();
             this.article = article;
             Title.Text = article.title;
             if (article.uid != "")

@@ -25,6 +25,15 @@
     </UserControl.RenderTransform>
 
     <UserControl.Triggers>
+        <EventTrigger x:Name="LoadedAnimation" RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="X"
+                                              Storyboard.TargetName="trans" From="280" To="0"          
+                                              Duration="0:0:0.6" DecelerationRatio="1"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
         <EventTrigger RoutedEvent="MouseEnter">
             <BeginStoryboard>
                 <Storyboard>

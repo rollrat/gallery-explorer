@@ -437,11 +437,12 @@ namespace GalleryExplorer
                     int column = dialog.AlignColumnIndex;
                     int row = dialog.AlignRowIndex;
 
+                    align_column = column;
+                    align_row = row;
+
                     if (column == align_column && row == align_row) return;
                     if (items == null) return;
                     sort_data(column, row);
-                    align_column = column;
-                    align_row = row;
                     initialize_page();
                 }
                 Button_Click(null, null);

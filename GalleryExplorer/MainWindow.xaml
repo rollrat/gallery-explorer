@@ -215,15 +215,6 @@
                         </StackPanel>
                     </ListBoxItem>
 
-                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Record" IsEnabled="False">
-                        <ListBoxItem.ToolTip>
-                            <ToolTip Content="기록" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
-                        </ListBoxItem.ToolTip>
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Paper" Height="24" Width="24" Margin="0 0 0 0"/>
-                        </StackPanel>
-                    </ListBoxItem>
-
                     <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Statistics" IsEnabled="False">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="통계" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>

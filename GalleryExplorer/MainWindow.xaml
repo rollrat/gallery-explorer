@@ -242,6 +242,15 @@
                         </StackPanel>
                     </ListBoxItem>
 
+                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Signal" IsEnabled="False">
+                        <ListBoxItem.ToolTip>
+                            <ToolTip Content="신호 감지기" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
+                        </ListBoxItem.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Antenna" Height="24" Width="24" Margin="0 0 0 0"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                    
                     <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Tool" IsEnabled="False">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="도구" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>

@@ -108,6 +108,9 @@
     </ApplicationDefinition>
     <Compile Include="Controls\FallsPanel.cs" />
     <Compile Include="Controls\NonTopmostPopup.cs" />
+    <Compile Include="SignalWindow.xaml.cs">
+      <DependentUpon>SignalWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SyncProgress.xaml.cs">
       <DependentUpon>SyncProgress.xaml</DependentUpon>
     </Compile>
@@ -172,6 +175,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SignalWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SyncProgress.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

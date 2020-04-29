@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,6 +65,7 @@ namespace GalleryExplorer
             Instance = this;
             timer.Interval = new TimeSpan(0, 0, 2);
 
+            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
             {
                 Logger.Instance.PushError("unhandled: " + (e.ExceptionObject as Exception).ToString());

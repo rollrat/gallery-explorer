@@ -62,8 +62,8 @@ namespace GalleryExplorer.Core
             Model = new SettingModel
             {
                 Language = GetLanguageKey(),
-                //ThreadCount = Environment.ProcessorCount,
-                ThreadCount = 3,
+                ThreadCount = Environment.ProcessorCount,
+                //ThreadCount = 3,
                 PostprocessorThreadCount = 3,
 
                 NetworkSettings = new SettingModel.NetworkSetting

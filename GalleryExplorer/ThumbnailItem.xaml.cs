@@ -114,6 +114,7 @@ namespace GalleryExplorer
                         {
                             Icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.TrashCanOutline;
                         });
+                        return;
                     }
                     var page = DCInsideUtils.ParseBoardView(html);
                     if (page.ImagesLink.Count == 0) return;

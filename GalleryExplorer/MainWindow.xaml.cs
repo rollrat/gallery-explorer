@@ -392,6 +392,12 @@ namespace GalleryExplorer
                 await DialogHost.Show(dialog, "RootDialog");
                 Button_Click(null, null);
             }
+            else if (tag == "Sort")
+            {
+                var dialog = new Sorting();
+                await DialogHost.Show(dialog, "RootDialog");
+                Button_Click(null, null);
+            }
             else if (tag == "Console")
             {
                 Logger.Instance.ControlEnable = true;
@@ -429,12 +435,14 @@ namespace GalleryExplorer
         {
             ThumbnailPanel.Visibility = Visibility.Collapsed;
             SearchListView.Visibility = Visibility.Visible;
+            SortButton.IsEnabled = false;
         }
 
         private void ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
             SearchListView.Visibility = Visibility.Collapsed;
             ThumbnailPanel.Visibility = Visibility.Visible;
+            SortButton.IsEnabled = true;
         }
 
         #endregion

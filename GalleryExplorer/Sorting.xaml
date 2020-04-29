@@ -48,7 +48,7 @@
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </ComboBox.Resources>
-                <ComboBoxItem Content="작성시간 순으로 정렬"/>
+                <ComboBoxItem Content="작성 시간순으로 정렬"/>
                 <ComboBoxItem Content="댓글 많은 순으로 정렬"/>
                 <ComboBoxItem Content="추천 수 많은 순으로 정렬"/>
                 <ComboBoxItem Content="조회수 높은 순으로 정렬"/>

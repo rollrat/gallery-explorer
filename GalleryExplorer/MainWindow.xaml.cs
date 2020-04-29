@@ -81,7 +81,7 @@ namespace GalleryExplorer
                 if (Logger.Instance.ControlEnable)
                     Core.Console.Instance.Stop();
             }
-            TemporaryFiles.DeleteAllPreviouslyUsed();
+            //TemporaryFiles.DeleteAllPreviouslyUsed();
             Application.Current.Shutdown();
             Process.GetCurrentProcess().Kill();
         }

@@ -65,8 +65,8 @@
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </ComboBox.Resources>
-                <ComboBoxItem Content="오름차순"/>
                 <ComboBoxItem Content="내림차순"/>
+                <ComboBoxItem Content="오름차순"/>
             </ComboBox>
         </Grid>
 

@@ -175,6 +175,9 @@ namespace GalleryExplorer
 
         #region Search
 
+        int align_row = 0;
+        int align_column = 0;
+
         static void IntersectCountSplit(string[] target, List<string> source, ref bool[] check)
         {
             if (target != null)
@@ -328,6 +331,7 @@ namespace GalleryExplorer
             {
                 items = result;
                 max_page = items.Count / show_elem_per_page;
+                sort_data(align_column, align_row);
                 initialize_page();
             }
         }
@@ -348,6 +352,39 @@ namespace GalleryExplorer
                     Thread.Sleep(100);
                 }
             });
+        }
+
+        private void sort_data(int column, int row)
+        {
+            // Sort with descending order
+            if (column == 0)
+            {
+                items.Sort((x, y) => y.no.ToInt().CompareTo(x.no.ToInt()));
+            }
+            else if (column == 1)
+            {
+                Func<string, int> gg = (x) =>
+                {
+                    if (string.IsNullOrEmpty(x))
+                        return 0;
+                    return x.TrimStart('[').TrimEnd(']').ToInt();
+                };
+                items.Sort((x, y) => gg(y.replay_num).CompareTo(gg(x.replay_num)));
+            }
+            else if (column == 2)
+            {
+                items.Sort((x, y) => y.recommend.ToInt().CompareTo(x.recommend.ToInt()));
+            }
+            else if (column == 3)
+            {
+                items.Sort((x, y) => y.count.ToInt().CompareTo(x.count.ToInt()));
+            }
+            else if (column == 4)
+            {
+                //items.Sort((x, y) => y.count.ToInt().CompareTo(x.count.ToInt()));
+            }
+
+            if (row == 1) items.Reverse();
         }
 
         #endregion
@@ -394,8 +431,19 @@ namespace GalleryExplorer
             }
             else if (tag == "Sort")
             {
-                var dialog = new Sorting();
-                await DialogHost.Show(dialog, "RootDialog");
+                var dialog = new Sorting(align_column, align_row);
+                if ((bool)await DialogHost.Show(dialog, "RootDialog"))
+                {
+                    int column = dialog.AlignColumnIndex;
+                    int row = dialog.AlignRowIndex;
+
+                    if (column == align_column && row == align_row) return;
+                    if (items == null) return;
+                    sort_data(column, row);
+                    align_column = column;
+                    align_row = row;
+                    initialize_page();
+                }
                 Button_Click(null, null);
             }
             else if (tag == "Console")

@@ -405,7 +405,7 @@ namespace GalleryExplorer
                 var dialog = new CreateNew();
                 if ((bool)await DialogHost.Show(dialog, "RootDialog") && !string.IsNullOrEmpty(dialog.SelectedGallery))
                 {
-                    var prog = new CreateNewProgress(dialog.SelectedGallery, dialog.SelectedGalleryName);
+                    var prog = new CreateNewProgress(dialog.SelectedGallery, dialog.SelectedGalleryName, dialog.PageStartsNum, dialog.PageEndsNum);
                     await DialogHost.Show(prog, "RootDialog");
                     var cp = new CreateNewComplete();
                     await DialogHost.Show(cp, "RootDialog");

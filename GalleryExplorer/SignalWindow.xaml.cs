@@ -44,14 +44,15 @@ namespace GalleryExplorer
             loop_thread.Abort();
         }
 
-        
         private void loop(object param)
         {
             int latest_index = DCGalleryAnalyzer.Instance.Articles[0].no.ToInt();
             var rand = new Random();
             var dict = new Dictionary<int, ThumbnailItem>();
             int min_sleep = 2000;
+            int rand_max_sleep = 3000;
             int rand_sleep;
+            int loop_count = 0;
             while (true)
             {
                 var url = "";
@@ -90,6 +91,13 @@ namespace GalleryExplorer
                     while (latest_index < articles[i].no.ToInt())
                         i++;
 
+                    // If article regeneration delay is too short ...
+                    if (i >= 3 && loop_count >= 2)
+                    {
+                        rand_max_sleep = 1000;
+                        min_sleep = 500;
+                    }
+
                     // Create
                     while (--i >= 0)
                     {
@@ -113,8 +121,9 @@ namespace GalleryExplorer
                         SignalPannel.Children.RemoveAt(SignalPannel.Children.Count - 1);
                     }
                 });
-                rand_sleep = rand.Next(500, 3000);
+                rand_sleep = rand.Next(500, rand_max_sleep);
                 Thread.Sleep(min_sleep + rand_sleep);
+                loop_count++;
             }
         }
 

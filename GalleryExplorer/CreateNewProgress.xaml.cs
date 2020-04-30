@@ -28,7 +28,7 @@ namespace GalleryExplorer
     /// </summary>
     public partial class CreateNewProgress : UserControl
     {
-        public CreateNewProgress(string id, string name)
+        public CreateNewProgress(string id, string name, int starts, int ends)
         {
             InitializeComponent();
 
@@ -36,23 +36,14 @@ namespace GalleryExplorer
 
             Task.Run(() =>
             {
-                string url;
-                if (DCGalleryList.Instance.MinorGalleryIds.Contains(id))
-                    url = $"https://gall.dcinside.com/mgallery/board/lists?id={id}";
-                else
-                    url = $"https://gall.dcinside.com/board/lists?id={id}";
-
-                var node = NetTools.DownloadString(url).ToHtmlNode().SelectSingleNode("//a[@class='page_end']");
-                var page_end = 10;
-
-                if (node != null)
-                    page_end = node.GetAttributeValue("href", "").Split('=').Last().ToInt();
+                var page_end = ends;
 
                 var is_minor = DCGalleryList.Instance.MinorGalleryIds.Contains(id);
                 var articles = new List<DCInsidePageArticle>();
 
-                for (int i = 1; i < page_end + 10; i++)
+                for (int i = starts; i <= ends; i++)
                 {
+                    string url;
                     if (is_minor)
                         url = $"https://gall.dcinside.com/mgallery/board/lists/?id={id}&page={i}";
                     else
@@ -75,7 +66,7 @@ namespace GalleryExplorer
 
                     articles.AddRange(gall.articles);
 
-                    Extends.Post(() => Message2.Text = $"작업 중...[{i}/{page_end + 10} | {(100.0 * i / (page_end + 10)).ToString("#0.00")}%]" );
+                    Extends.Post(() => Message2.Text = $"작업 중...[{i}/{page_end - starts + 1} | {(100.0 * i / (page_end - starts + 1)).ToString("#0.00")}%]" );
                 }
 
                 var overlap = new HashSet<string>();

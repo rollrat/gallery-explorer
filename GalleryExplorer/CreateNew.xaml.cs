@@ -60,8 +60,9 @@ namespace GalleryExplorer
                 var page_end = 10;
 
                 if (node != null)
-                    page_end = node.GetAttributeValue("href", "").Split('=').Last().ToInt();
+                    page_end = node.GetAttributeValue("href", "").Split('=').Last().ToInt() + 10;
 
+                PageEnds.Text = page_end.ToString();
                 Status.Text = $"예상 수행시간 {page_end * 0.7}초";
                 Status.Visibility = Visibility.Visible;
                 SelectedGallery = id;
@@ -71,6 +72,26 @@ namespace GalleryExplorer
             {
                 Status.Visibility = Visibility.Collapsed;
                 SelectedGallery = "";
+            }
+        }
+
+        public int PageStartsNum;
+        private void PageStarts_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!int.TryParse(PageStarts.Text, out PageStartsNum))
+            {
+                MessageBox.Show("숫자만 입력해 주세요!", "Gallery Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
+                PageStarts.Text = "1";
+            }
+        }
+
+        public int PageEndsNum;
+        private void PageEnds_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!int.TryParse(PageEnds.Text, out PageEndsNum))
+            {
+                MessageBox.Show("숫자만 입력해 주세요!", "Gallery Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
+                PageEnds.Text = "1";
             }
         }
     }

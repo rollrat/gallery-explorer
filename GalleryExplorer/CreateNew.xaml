@@ -65,7 +65,14 @@
                 </materialDesign:Card>
             </controls1:NonTopmostPopup>
 
-            <TextBlock x:Name="Status" Grid.Row="1" Grid.ColumnSpan="2" Margin="0 4 0 0" FontSize="16" VerticalAlignment="Center" Visibility="Collapsed"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="페이지 선택: " FontSize="16" VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Margin="0 4 0 0">
+                <TextBox x:Name="PageStarts" Text="1" TextAlignment="Right" Width="190" FontSize="16" Height="30" VerticalContentAlignment="Center" TextChanged="PageStarts_TextChanged"/>
+                <TextBlock Text="~" VerticalAlignment="Center" FontSize="16" Margin="4 0 4 0"/>
+                <TextBox x:Name="PageEnds" Text="1" TextAlignment="Right" Width="190" FontSize="16" Height="30" VerticalContentAlignment="Center" TextChanged="PageEnds_TextChanged"/>
+            </StackPanel>
+
+            <TextBlock x:Name="Status" Grid.Row="2" Grid.ColumnSpan="2" Margin="0 4 0 0" FontSize="16" VerticalAlignment="Center" Visibility="Collapsed"/>
 
         </Grid>
 

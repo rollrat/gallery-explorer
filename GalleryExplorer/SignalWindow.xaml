@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:GalleryExplorer"
         xmlns:controls1="clr-namespace:GalleryExplorer.Controls"
         mc:Ignorable="d"
-        Title="신호 감지기" Height="560.799" Width="280">
+        Title="신호 감지기" Height="560.799" Width="267" MaxWidth="267" SourceInitialized="Window_SourceInitialized">
     <Grid Background="#181818">
         <controls1:FallsPanel x:Name="SignalPannel"/>
     </Grid>

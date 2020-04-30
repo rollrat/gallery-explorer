@@ -28,7 +28,7 @@ namespace GalleryExplorer
     /// </summary>
     public partial class ThumbnailItem : UserControl
     {
-        DCInsidePageArticle article;
+        public DCInsidePageArticle Article { get; set; }
         string URL;
 
         public ThumbnailItem(DCInsidePageArticle article, bool r2l = false)
@@ -37,17 +37,23 @@ namespace GalleryExplorer
 
             if (!r2l)
                 LoadedAnimation.Actions.Clear();
-            this.article = article;
+            if (DCGalleryAnalyzer.Instance.Model.is_minor_gallery)
+                URL = $"https://gall.dcinside.com/mgallery/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
+            else
+                URL = $"https://gall.dcinside.com/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
+            Update(article);
+            Loaded += ThumbnailItem_Loaded;
+        }
+
+        public void Update(DCInsidePageArticle article)
+        {
+            Article = article;
             Title.Text = article.title;
             if (article.uid != "")
                 Author.Text = $"{article.nick} ({article.uid})";
             else
                 Author.Text = $"{article.nick} ({article.ip})";
             ViewCount.Text = article.count + " Views";
-            if (DCGalleryAnalyzer.Instance.Model.is_minor_gallery)
-                URL = $"https://gall.dcinside.com/mgallery/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
-            else
-                URL = $"https://gall.dcinside.com/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
             //DateTime.Text = article.date.ToString();
             var upvote = article.recommend.ToInt();
             if (upvote > 0)
@@ -83,7 +89,6 @@ namespace GalleryExplorer
                     Rating.Foreground = Brushes.HotPink;
                 }
             }
-            Loaded += ThumbnailItem_Loaded;
         }
 
         bool loaded = false;
@@ -93,7 +98,7 @@ namespace GalleryExplorer
             if (loaded) return;
             loaded = true;
 
-            switch (article.type)
+            switch (Article.type)
             {
                 case "icon_recomimg":
                 case "icon_pic":
@@ -105,7 +110,7 @@ namespace GalleryExplorer
                     break;
             }
 
-            if (article.type == "icon_pic" || article.type == "icon_recomimg")
+            if (Article.type == "icon_pic" || Article.type == "icon_recomimg")
             {
                 Task.Run(() =>
                 {

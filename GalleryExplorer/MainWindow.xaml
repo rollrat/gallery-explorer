@@ -9,7 +9,7 @@
         xmlns:controls1="clr-namespace:GalleryExplorer.Controls"
         LocationChanged="Window_LocationChanged"
         SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen"
-        Title="디시인사이드 갤러리 탐색기" Height="674.667" Width="1161.667">
+        Title="디시인사이드 갤러리 탐색기" Height="781.834" Width="1161.667">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -239,6 +239,15 @@
                         </ListBoxItem.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Antenna" Height="24" Width="24" Margin="0 0 0 0"/>
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <ListBoxItem x:Name="DownloadButton" PreviewMouseUp="StackPanel_MouseDown" Tag="Download" IsEnabled="False">
+                        <ListBoxItem.ToolTip>
+                            <ToolTip Content="다운로더" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
+                        </ListBoxItem.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Download" Height="24" Width="24" Margin="0 0 0 0"/>
                         </StackPanel>
                     </ListBoxItem>
                     

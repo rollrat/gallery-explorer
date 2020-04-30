@@ -334,7 +334,7 @@ namespace GalleryExplorer.Core
                 if (pa.ip == "")
                 {
                     pa.islogined = true;
-                    if (tr.SelectSingleNode("./td[3]/a/img").GetAttributeValue("src", "").Contains("fix_nik.gif"))
+                    if (tr.SelectSingleNode("./td[3]/a/img") != null && tr.SelectSingleNode("./td[3]/a/img").GetAttributeValue("src", "").Contains("fix_nik.gif"))
                         pa.isfixed = true;
                 }
                 pa.date = DateTime.Parse(tr.SelectSingleNode("./td[4]").GetAttributeValue("title", ""));

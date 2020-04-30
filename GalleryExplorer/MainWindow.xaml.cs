@@ -367,7 +367,7 @@ namespace GalleryExplorer
                 {
                     if (string.IsNullOrEmpty(x))
                         return 0;
-                    return x.TrimStart('[').TrimEnd(']').ToInt();
+                    return x.TrimStart('[').TrimEnd(']').Split('/')[0].ToInt();
                 };
                 items.Sort((x, y) => gg(y.replay_num).CompareTo(gg(x.replay_num)));
             }
@@ -438,15 +438,15 @@ namespace GalleryExplorer
                     int column = dialog.AlignColumnIndex;
                     int row = dialog.AlignRowIndex;
 
+                    if (column == align_column && row == align_row) return;
+
                     align_column = column;
                     align_row = row;
 
-                    if (column == align_column && row == align_row) return;
                     if (items == null) return;
                     sort_data(column, row);
                     initialize_page();
                 }
-                Button_Click(null, null);
             }
             else if (tag == "Console")
             {

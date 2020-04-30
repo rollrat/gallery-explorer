@@ -36,12 +36,10 @@ namespace GalleryExplorer
 
             Task.Run(() =>
             {
-                var page_end = ends;
-
                 var is_minor = DCGalleryList.Instance.MinorGalleryIds.Contains(id);
                 var articles = new List<DCInsidePageArticle>();
 
-                for (int i = starts; i <= ends; i++)
+                for (int i = starts, j = 1; i <= ends; i++, j++)
                 {
                     string url;
                     if (is_minor)
@@ -66,7 +64,7 @@ namespace GalleryExplorer
 
                     articles.AddRange(gall.articles);
 
-                    Extends.Post(() => Message2.Text = $"작업 중...[{i}/{page_end - starts + 1} | {(100.0 * i / (page_end - starts + 1)).ToString("#0.00")}%]" );
+                    Extends.Post(() => Message2.Text = $"작업 중...[{j}/{ends - starts + 1} | {(100.0 * j / (ends - starts + 1)).ToString("#0.00")}%]" );
                 }
 
                 var overlap = new HashSet<string>();

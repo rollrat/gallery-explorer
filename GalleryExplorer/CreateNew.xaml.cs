@@ -75,7 +75,7 @@ namespace GalleryExplorer
             }
         }
 
-        public int PageStartsNum;
+        public int PageStartsNum = 1;
         private void PageStarts_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!int.TryParse(PageStarts.Text, out PageStartsNum))
@@ -83,15 +83,27 @@ namespace GalleryExplorer
                 MessageBox.Show("숫자만 입력해 주세요!", "Gallery Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
                 PageStarts.Text = "1";
             }
+
+            if (PageStartsNum > PageEndsNum)
+            {
+                MessageBox.Show("시작 페이지는 끝 페이지보다 작아야 합니다!", "Gallery Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
+                PageStarts.Text = PageEndsNum.ToString();
+            }
         }
 
-        public int PageEndsNum;
+        public int PageEndsNum = 1;
         private void PageEnds_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!int.TryParse(PageEnds.Text, out PageEndsNum))
             {
                 MessageBox.Show("숫자만 입력해 주세요!", "Gallery Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
                 PageEnds.Text = "1";
+            }
+
+            if (PageStartsNum > PageEndsNum)
+            {
+                MessageBox.Show("끝 페이지는 시작 페이지보다 커야 합니다!", "Gallery Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
+                PageEnds.Text = PageStartsNum.ToString();
             }
         }
     }

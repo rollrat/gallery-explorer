@@ -244,6 +244,7 @@ namespace GalleryExplorer.Core
             {
                 // normal command
                 {"dcinside", new DCInsideConsole()},
+                {"image", new ImageConsole()},
             };
 
             RedirectionAfterLoopInit?.Invoke();

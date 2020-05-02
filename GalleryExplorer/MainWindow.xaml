@@ -242,15 +242,24 @@
                         </StackPanel>
                     </ListBoxItem>
 
-                    <ListBoxItem x:Name="DownloadButton" PreviewMouseUp="StackPanel_MouseDown" Tag="Download" IsEnabled="False">
+                    <ListBoxItem x:Name="ArchiveButton" PreviewMouseUp="StackPanel_MouseDown" Tag="Archive" IsEnabled="False">
                         <ListBoxItem.ToolTip>
-                            <ToolTip Content="다운로더" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
+                            <ToolTip Content="아카이브" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
                         </ListBoxItem.ToolTip>
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Download" Height="24" Width="24" Margin="0 0 0 0"/>
+                            <materialDesign:PackIcon Kind="ArchiveArrowDown" Height="24" Width="24" Margin="0 0 0 0"/>
                         </StackPanel>
                     </ListBoxItem>
-                    
+
+                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="ImageSmilarity" IsEnabled="True">
+                        <ListBoxItem.ToolTip>
+                            <ToolTip Content="이미지 유사도 분석" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
+                        </ListBoxItem.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Flask" Height="24" Width="24" Margin="0 0 0 0"/>
+                        </StackPanel>
+                    </ListBoxItem>
+
                     <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Tool" IsEnabled="False">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="도구" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>

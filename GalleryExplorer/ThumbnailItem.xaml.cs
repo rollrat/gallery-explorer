@@ -115,7 +115,7 @@ namespace GalleryExplorer
                 Task.Run(() =>
                 {
                     var html = NetTools.DownloadString(URL);
-                    if (html == null)
+                    if (html == null || html == "")
                     {
                         Extends.Post(() =>
                         {

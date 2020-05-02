@@ -458,6 +458,10 @@ namespace GalleryExplorer
             {
                 new SignalWindow().Show();
             }
+            else if (tag == "ImageSmilarity")
+            {
+                new ImageSimilarityWindow().Show();
+            }
             else if(tag == "Help")
             {
                 var dialog = new InfoMessage();

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,37 +46,40 @@ namespace GalleryExplorer.Core
         /// Parent Path for Downloading
         /// </summary>
         public string SuperPath;
-
-        /// <summary>
-        /// WebSocket Server Address
-        /// </summary>
-        public string ConnectionAddress;
     }
 
     public class Settings : ILazy<Settings>
     {
+        public const string Name = "settings.json";
+
         public SettingModel Model { get; set; }
         public SettingModel.NetworkSetting Network { get { return Model.NetworkSettings; } }
 
         public Settings()
         {
-            Model = new SettingModel
+            var full_path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Name);
+            if (File.Exists(full_path))
+                Model = JsonConvert.DeserializeObject<SettingModel>(File.ReadAllText(full_path));
+
+            if (Model == null)
             {
-                Language = GetLanguageKey(),
-                ThreadCount = Environment.ProcessorCount,
-                //ThreadCount = 3,
-                PostprocessorThreadCount = 3,
-
-                NetworkSettings = new SettingModel.NetworkSetting
+                Model = new SettingModel
                 {
-                    TimeoutInfinite = false,
-                    TimeoutMillisecond = 10000,
-                    DownloadBufferSize = 131072,
-                    RetryCount = 10,
-                    UsingProxyList = false,
-                },
+                    Language = GetLanguageKey(),
+                    ThreadCount = Environment.ProcessorCount,
+                    PostprocessorThreadCount = 3,
 
-            };
+                    NetworkSettings = new SettingModel.NetworkSetting
+                    {
+                        TimeoutInfinite = false,
+                        TimeoutMillisecond = 10000,
+                        DownloadBufferSize = 131072,
+                        RetryCount = 10,
+                        UsingProxyList = false,
+                    },
+                };
+            }
+            Save();
         }
 
         public static string GetLanguageKey()
@@ -97,6 +101,16 @@ namespace GalleryExplorer.Core
                     break;
             }
             return language;
+        }
+
+        public void Save()
+        {
+            var full_path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Name);
+            var json = JsonConvert.SerializeObject(Model, Formatting.Indented);
+            using (var fs = new StreamWriter(new FileStream(full_path, FileMode.Create, FileAccess.Write)))
+            {
+                fs.Write(json);
+            }
         }
     }
 }

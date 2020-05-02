@@ -325,7 +325,7 @@ namespace GalleryExplorer.Core
 				// Reorder if we have numberOfResults, and set new tau
 				if (closestHits.Count == numberOfResults)
 				{
-					closestHits.Sort((a, b) => System.Collections.Generic.Comparer<double>.Default.Compare(b.dist, a.dist));
+					closestHits.Sort((a, b) => b.dist.CompareTo(a.dist));
 					this.tau = closestHits[0].dist;
 				}
 			}

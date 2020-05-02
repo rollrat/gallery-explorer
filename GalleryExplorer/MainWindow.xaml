@@ -25,7 +25,7 @@
     </Window.Resources>
 
     <materialDesign:DialogHost x:Name="RootDialogHost" Identifier="RootDialog">
-        <Grid  Background="#181818">
+        <Grid Background="#181818">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>

@@ -4,9 +4,96 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GalleryExplorer"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="이미지 유사도 분석기" Height="450" Width="800">
-    <Grid>
-        
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Grey.xaml"/>
+                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme." />-->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <Grid Background="#181818">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="#232323" Height="60">
+            <Grid.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </Grid.Resources>
+            <StackPanel Orientation="Horizontal">
+                <Button Click="ProjectOpen_Click" HorizontalAlignment="Left" Margin="8 0 0 0" Width="60" Height="40" Padding="0" Cursor="Hand" BorderBrush="#303030" Background="#303030">
+                    <materialDesign:PackIcon Kind="FileDocument" Height="24" Width="24" Foreground="#717171"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="분석 정보 열기" HasDropShadow="True"/>
+                    </Button.ToolTip>
+                </Button>
+                <Button Click="FolderOpen_Click" HorizontalAlignment="Left" Margin="8 0 0 0" Width="60" Height="40" Padding="0" Cursor="Hand" BorderBrush="#303030" Background="#303030">
+                    <materialDesign:PackIcon Kind="FolderOpen" Height="24" Width="24" Foreground="#717171"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="폴더 열기" HasDropShadow="True"/>
+                    </Button.ToolTip>
+                </Button>
+                <!--<Button HorizontalAlignment="Left" Margin="8 0 0 0" Width="60" Height="40" Cursor="Hand" BorderBrush="#303030" Background="#303030">
+                    <materialDesign:PackIcon Kind="Triangle" Height="24" Width="24" Foreground="#717171">
+                        <materialDesign:PackIcon.RenderTransform>
+                            <RotateTransform CenterX="12" CenterY="12" Angle="90"/>
+                        </materialDesign:PackIcon.RenderTransform>
+                    </materialDesign:PackIcon>
+                </Button>-->
+                <Button Click="FileOpen_Click" HorizontalAlignment="Left" Margin="8 0 0 0" Width="60" Height="40" Cursor="Hand" BorderBrush="#303030" Background="#303030">
+                    <materialDesign:PackIcon Kind="FileImage" Height="24" Width="24" Foreground="#717171"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="이미지 파일 열기" HasDropShadow="True"/>
+                    </Button.ToolTip>
+                </Button>
+                <Button Click="FindPhoto_Click" HorizontalAlignment="Left" Margin="8 0 0 0" Width="60" Height="40" Cursor="Hand" BorderBrush="#303030" Background="#303030">
+                    <materialDesign:PackIcon Kind="FindInPage" Height="24" Width="24" Foreground="#717171"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="유사한 사진 찾기" HasDropShadow="True"/>
+                    </Button.ToolTip>
+                </Button>
+                <Button Click="Clustering_Click" HorizontalAlignment="Left" Margin="8 0 0 0" Width="60" Height="40" Cursor="Hand" BorderBrush="#303030" Background="#303030">
+                    <materialDesign:PackIcon Kind="ChemicalWeapon" Height="24" Width="24" Foreground="#717171"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="클러스터링" HasDropShadow="True"/>
+                    </Button.ToolTip>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TreeView DockPanel.Dock="Left" HorizontalAlignment="Stretch" Background="#1C1C1C" BorderThickness="0" Grid.Column="0">
+
+            </TreeView>
+            <GridSplitter Width="2" HorizontalAlignment="Right" Background="#2C2C2C" VerticalAlignment="Stretch" ResizeBehavior="CurrentAndNext"/>
+            <Grid Grid.Column="1">
+
+            </Grid>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Background="#232323" Height="40" Orientation="Horizontal">
+            <ProgressBar x:Name="StatusProgress" Visibility="Collapsed" Margin="16 0 0 0" Style="{StaticResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" Width="20" Height="20"/>
+            <TextBlock x:Name="StatusText" Text="대기" FontSize="13" Foreground="White" VerticalAlignment="Center" Margin="16 0 0 0"/>
+        </StackPanel>
     </Grid>
 </Window>

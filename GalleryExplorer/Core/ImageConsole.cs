@@ -153,7 +153,7 @@ namespace GalleryExplorer.Core
                             iss.AppendImage(x);
                         });
 
-                        iss.FindForSoft(ImageSoftSimilarity.MakeSoftHash(@"C:\Users\rollrat\Desktop\새 폴더\1577170523.png"), 20);
+                        //iss.FindForSoft(ImageSoftSimilarity.MakeSoftHash(@"C:\Users\rollrat\Desktop\새 폴더\1577170523.png"), 20);
                     }
                     break;
 

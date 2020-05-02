@@ -9,9 +9,12 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GalleryExplorer.Core
@@ -168,17 +171,24 @@ namespace GalleryExplorer.Core
     /// </summary>
     public class ImageSoftSimilarity : IImageSimilarity
     {
-        Dictionary<string, Mat> hashs = new Dictionary<string, Mat>();
+        public Dictionary<string, ulong[]> Hashs { get; private set; } = new Dictionary<string, ulong[]>();
 
-        public static Mat MakeSoftHash(string path)
+        public static ulong[] MakeSoftHash(string path)
         {
             var image = Cv2.ImRead(path);
             var hash = new Mat();
             var algorithm = BlockMeanHash.Create(BlockMeanHashMode.Mode1);
+            if (image.Empty())
+                return null;
             algorithm.Compute(image, hash);
-            algorithm.Dispose();
             image.Dispose();
-            return hash;
+            algorithm.Dispose();
+            hash.GetArray(out byte[] buffer);
+            var rr = new ulong[16];
+            for (int i = 0; i < 15; i++)
+                rr[i] = BitConverter.ToUInt64(buffer, i * 8);
+            rr[15] = buffer[120];
+            return rr;
         }
 
         public void AppendImage(string path)
@@ -191,25 +201,38 @@ namespace GalleryExplorer.Core
             algorithm.Compute(image, hash);
             image.Dispose();
             algorithm.Dispose();
-            lock (hashs)
-                hashs.Add(path, hash);
+            hash.GetArray(out byte[] buffer);
+            var rr = new ulong[16];
+            for (int i = 0; i < 15; i++)
+                rr[i] = BitConverter.ToUInt64(buffer, i * 8);
+            rr[15] = buffer[120];
+            lock (Hashs)
+                Hashs.Add(path, rr);
         }
 
-        private static double compute_soft_similarity_vptree((string, Mat) s1, (string, Mat) s2)
+        public static byte BitCount(ulong value)
         {
-            var algorithm = BlockMeanHash.Create(BlockMeanHashMode.Mode1);
-            var result = algorithm.Compare(s1.Item2, s2.Item2);
-            algorithm.Dispose();
+            ulong result = value - ((value >> 1) & 0x5555555555555555UL);
+            result = (result & 0x3333333333333333UL) + ((result >> 2) & 0x3333333333333333UL);
+            return (byte)(unchecked(((result + (result >> 4)) & 0xF0F0F0F0F0F0F0FUL) * 0x101010101010101UL) >> 56);
+        }
+
+        private static double compute_soft_similarity_vptree((string, ulong[]) s1, (string, ulong[]) s2)
+        {
+            int result = 0;
+            for (int i = 0; i < 16; i++)
+                result += BitCount(s1.Item2[i] ^ s2.Item2[i]);
+
             return result;
         }
 
-        public List<(string, double)> FindForSoft(Mat hash, int counts = 5)
+        public List<(string, double)> FindForSoft(ulong[] hash, int counts = 5)
         {
-            (string, Mat)[] outs;
+            (string, ulong[])[] outs;
             double[] dist;
-            counts = Math.Min(counts, hashs.Count);
-            var vpTree = new VpTree<(string, Mat)>();
-            vpTree.Create(hashs.Select(x => (x.Key, x.Value)).ToArray(), compute_soft_similarity_vptree);
+            counts = Math.Min(counts, Hashs.Count);
+            var vpTree = new VpTree<(string, ulong[])>();
+            vpTree.Create(Hashs.Select(x => (x.Key, x.Value)).ToArray(), compute_soft_similarity_vptree);
             vpTree.Search(("", hash), counts, out outs, out dist);
             var result = new List<(string, double)>();
             for (int i = 0; i < outs.Length; i++)
@@ -230,19 +253,19 @@ namespace GalleryExplorer.Core
             if (threshold < 0)
                 threshold = 100;
 
-            var vpTree = new VpTree<(string, Mat)>();
-            vpTree.Create(hashs.Select(x => (x.Key, x.Value)).ToArray(), compute_soft_similarity_vptree);
+            var vpTree = new VpTree<(string, ulong[])>();
+            vpTree.Create(Hashs.Select(x => (x.Key, x.Value)).ToArray(), compute_soft_similarity_vptree);
 
             var clustered = new HashSet<string>();
             var result = new List<List<string>>();
-            foreach (var src in hashs)
+            foreach (var src in Hashs)
             {
                 if (clustered.Contains(src.Key))
                     continue;
 
-                (string, Mat)[] outs;
+                (string, ulong[])[] outs;
                 double[] dist;
-                var counts = Math.Min(depth, hashs.Count - clustered.Count);
+                var counts = Math.Min(depth, Hashs.Count - clustered.Count);
                 vpTree.Search((src.Key, src.Value), counts, out outs, out dist);
 
                 var sresult = new List<string>();
@@ -256,13 +279,12 @@ namespace GalleryExplorer.Core
                 result.Add(sresult);
                 outs = null;
                 dist = null;
-                progress?.Invoke((clustered.Count, hashs.Count));
+                progress?.Invoke((clustered.Count, Hashs.Count));
             }
 
             result.Sort((x, y) => y.Count.CompareTo(x.Count));
             return result;
         }
-
     }
 
     /// <summary>

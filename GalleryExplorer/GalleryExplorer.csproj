@@ -151,11 +151,16 @@
     <Compile Include="ArchiveWindow.xaml.cs">
       <DependentUpon>ArchiveWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ArrangePanel.cs" />
     <Compile Include="Controls\FallsPanel.cs" />
     <Compile Include="Controls\NonTopmostPopup.cs" />
     <Compile Include="Core\ImageConsole.cs" />
     <Compile Include="Core\ImageSimilarity.cs" />
     <Compile Include="Core\VPTree.cs" />
+    <Compile Include="Domain\ImageSimilarityDataGridViewModel.cs" />
+    <Compile Include="ImageElements.xaml.cs">
+      <DependentUpon>ImageElements.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageSimilarityWindow.xaml.cs">
       <DependentUpon>ImageSimilarityWindow.xaml</DependentUpon>
     </Compile>
@@ -187,6 +192,10 @@
     <Page Include="CreateNewProgress.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ImageElements.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ImageSimilarityWindow.xaml">
       <SubType>Designer</SubType>

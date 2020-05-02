@@ -2,6 +2,7 @@
 // Copyright (C) 2020. rollrat. Licensed under the MIT Licence.
 
 using GalleryExplorer.Core;
+using GalleryExplorer.Domain;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
@@ -35,6 +36,8 @@ namespace GalleryExplorer
         {
             InitializeComponent();
 
+            ResultList.DataContext = new ImageSimilarityDataGridViewModel();
+            ResultList.Sorting += new DataGridSortingEventHandler(new DataGridSorter<ImageSimilarityDataGridItemViewModel>(ResultList).SortHandler);
             iss = new ImageSoftSimilarity();
         }
 
@@ -70,10 +73,10 @@ namespace GalleryExplorer
 
         private void process_folder(string path)
         {
-            var files = Directory.GetFiles(path);
-            var total = files.Length;
+            var files = Directory.GetFiles(path).Where(x => x.EndsWith(".png") || x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".bmp") || x.EndsWith(".webp"));
+            var total = files.Count();
             var count = 0;
-            Parallel.ForEach(Directory.GetFiles(path).Where(x => x.EndsWith(".png") || x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".bmp") || x.EndsWith(".webp")),
+            Parallel.ForEach(files,
                 x => 
                 { 
                     iss.AppendImage(x);
@@ -107,14 +110,73 @@ namespace GalleryExplorer
         {
             StatusProgress.Visibility = Visibility.Visible;
             Extends.Post(() => StatusText.Text = $"VP-Tree를 생성하는 중...");
+            double rate;
+            if (!double.TryParse(MaxRate.Text, out rate))
+            {
+                MessageBox.Show("클러스터링 최고 역치는 실수여야합니다!", "Gallery Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             await Task.Run(() => {
                 var clustered = iss.Clustering(x =>
                 {
                     Extends.Post(() => StatusText.Text = $"클러스터링 중 ... [{x.Item1.ToString("#,#")}/{x.Item2.ToString("#,#")}] ({(x.Item1 / (double)x.Item2 * 100.0).ToString("#0.00")} %)");
+                }, 50, rate);
+
+                Extends.Post(() =>
+                {
+                    var vm = ResultList.DataContext as ImageSimilarityDataGridViewModel;
+                    vm.Items.Clear();
+                    clustered.Where(x => x.Count >= 2).ToList().ForEach(x => vm.Items.Add(new ImageSimilarityDataGridItemViewModel 
+                    {
+                        개수 = x.Count.ToString(),
+                        평균_정확도 = x.Max(y => y.Item2).ToString(),
+                        results = x
+                    }));
                 });
             });
             StatusProgress.Visibility = Visibility.Collapsed;
             Extends.Post(() => StatusText.Text = $"클러스터링이 완료되었습니다.");
+        }
+
+        List<string> current;
+        private void ResultList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ResultList.SelectedItems.Count > 0)
+            {
+                var no = (ResultList.SelectedItems[0] as ImageSimilarityDataGridItemViewModel).results;
+                ImagePanel.Children.Clear();
+                no.ForEach(x => ImagePanel.Children.Add(new ImageElements(x.Item1, x.Item2)));
+                current = no.Select(x => x.Item1).ToList();
+                ImagePanel.Children.OfType<ImageElements>().ToList().ForEach(x => x.AdjustWidth((int)WidthSlider.Value));
+            }
+        }
+
+        private void Detail_Click(object sender, RoutedEventArgs e)
+        {
+            if (current == null) return;
+            var hard = new ImageHardSimilarity();
+            var hash = current.Select(x => hard.MakeHash(x));
+            var similarity = hash.Skip(1).Select(x => ImageHardSimilarity.GetCosineSimilarity(hash.First(), x)).ToList();
+
+            ImagePanel.Children.Clear();
+            ImagePanel.Children.Add(new ImageElements(current[0], 1));
+
+            for (int i = 0; i < similarity.Count; i++)
+            {
+                ImagePanel.Children.Add(new ImageElements(current[i + 1], similarity[i]));
+            }
+            ImagePanel.Children.OfType<ImageElements>().ToList().ForEach(x => x.AdjustWidth((int)WidthSlider.Value));
+        }
+
+        private void Move_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (ImagePanel != null && ImagePanel.Children != null)
+                ImagePanel.Children.OfType<ImageElements>().ToList().ForEach(x => x.AdjustWidth((int)WidthSlider.Value));
         }
     }
 }

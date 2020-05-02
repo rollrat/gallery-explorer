@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GalleryExplorer"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local1="clr-namespace:GalleryExplorer.Controls"
         mc:Ignorable="d"
-        Title="이미지 유사도 분석기" Height="450" Width="800">
-    
+        Title="이미지 유사도 분석기" Height="607" Width="1469">
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -18,7 +19,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid Background="#181818">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -74,7 +75,22 @@
                         <ToolTip Content="클러스터링" HasDropShadow="True"/>
                     </Button.ToolTip>
                 </Button>
+                <TextBlock Margin="16 16 0 0" Text="클러스터링 최고 역치: " VerticalAlignment="Center" Foreground="White"/>
+                <TextBox x:Name="MaxRate" Margin="0 16 0 0" Text="46" VerticalAlignment="Center" Foreground="White"/>
+                <Button Click="Detail_Click" HorizontalAlignment="Left" Margin="32 0 0 0" Width="60" Height="40" Cursor="Hand" BorderBrush="#303030" Background="#303030">
+                    <materialDesign:PackIcon Kind="Dependencies" Height="24" Width="24" Foreground="#717171"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="정밀 분석" HasDropShadow="True"/>
+                    </Button.ToolTip>
+                </Button>
+                <Button Click="Move_Click" HorizontalAlignment="Left" Margin="8 0 0 0" Width="60" Height="40" Cursor="Hand" BorderBrush="#303030" Background="#303030">
+                    <materialDesign:PackIcon Kind="ImageMove" Height="24" Width="24" Foreground="#717171"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="중복된 이미지 옮기기" HasDropShadow="True"/>
+                    </Button.ToolTip>
+                </Button>
             </StackPanel>
+            <Slider x:Name="WidthSlider" ValueChanged="Slider_ValueChanged" TickFrequency="5" Orientation="Horizontal" Minimum="100" Maximum="600" Value="400" Width="100" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 16 0" />
         </Grid>
 
         <Grid Grid.Row="1">
@@ -82,12 +98,52 @@
                 <ColumnDefinition Width="200"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TreeView DockPanel.Dock="Left" HorizontalAlignment="Stretch" Background="#1C1C1C" BorderThickness="0" Grid.Column="0">
 
-            </TreeView>
+            <Grid.Resources>
+                <Style x:Key="TextBlockStyleKey" TargetType="{x:Type TextBlock}">
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                    <Setter Property="Margin" Value="5 0 0 0" />
+                </Style>
+            </Grid.Resources>
+
+            <DataGrid x:Name="ResultList" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding Items}" CanUserSortColumns="True" IsReadOnly="True" AutoGenerateColumns="False"
+                  SelectionMode="Extended" SelectionUnit="FullRow" IsSynchronizedWithCurrentItem="True"  MouseDoubleClick="ResultList_MouseDoubleClick"
+                  CanUserAddRows="False" materialDesign:DataGridAssist.CellPadding="4 2 2 2" Background="#1C1C1C" materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
+                <DataGrid.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                            <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+                            <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <materialDesign:DataGridTextColumn  Binding="{Binding 개수}" Width="59" Header="개수" SortDirection="Descending" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                    <materialDesign:DataGridTextColumn  Binding="{Binding 평균_정확도}" Width="95" Header="최고 역유사도" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                </DataGrid.Columns>
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Height" Value="25"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="Background" Value="Gray"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
+            </DataGrid>
+
+
             <GridSplitter Width="2" HorizontalAlignment="Right" Background="#2C2C2C" VerticalAlignment="Stretch" ResizeBehavior="CurrentAndNext"/>
             <Grid Grid.Column="1">
-
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <local1:ArrangePanel x:Name="ImagePanel"/>
+                </ScrollViewer>
             </Grid>
         </Grid>
 

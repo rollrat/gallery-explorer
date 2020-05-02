@@ -163,7 +163,6 @@ namespace GalleryExplorer.Core
         {
             return hashs.Select(x => x.Value).ToList();
         }
-
     }
 
     /// <summary>
@@ -193,19 +192,8 @@ namespace GalleryExplorer.Core
 
         public void AppendImage(string path)
         {
-            var image = Cv2.ImRead(path);
-            var hash = new Mat();
-            var algorithm = BlockMeanHash.Create(BlockMeanHashMode.Mode1);
-            if (image.Empty())
-                return;
-            algorithm.Compute(image, hash);
-            image.Dispose();
-            algorithm.Dispose();
-            hash.GetArray(out byte[] buffer);
-            var rr = new ulong[16];
-            for (int i = 0; i < 15; i++)
-                rr[i] = BitConverter.ToUInt64(buffer, i * 8);
-            rr[15] = buffer[120];
+            var rr = MakeSoftHash(path);
+            if (rr == null) return;
             lock (Hashs)
                 Hashs.Add(path, rr);
         }
@@ -220,7 +208,7 @@ namespace GalleryExplorer.Core
         private static double compute_soft_similarity_vptree((string, ulong[]) s1, (string, ulong[]) s2)
         {
             int result = 0;
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < s1.Item2.Length; i++)
                 result += BitCount(s1.Item2[i] ^ s2.Item2[i]);
 
             return result;
@@ -246,7 +234,7 @@ namespace GalleryExplorer.Core
         /// </summary>
         /// <param name="hash"></param>
         /// <param name="threshold"></param>
-        public List<List<string>> Clustering(Action<(int, int)> progress = null, int depth = 50, double threshold = 100)
+        public List<List<(string, double)>> Clustering(Action<(int, int)> progress = null, int depth = 50, double threshold = 100)
         {
             if (depth < 0)
                 depth = 50;
@@ -257,7 +245,8 @@ namespace GalleryExplorer.Core
             vpTree.Create(Hashs.Select(x => (x.Key, x.Value)).ToArray(), compute_soft_similarity_vptree);
 
             var clustered = new HashSet<string>();
-            var result = new List<List<string>>();
+            var result = new List<List<(string, double)>>();
+            int count = 0;
             foreach (var src in Hashs)
             {
                 if (clustered.Contains(src.Key))
@@ -265,25 +254,38 @@ namespace GalleryExplorer.Core
 
                 (string, ulong[])[] outs;
                 double[] dist;
-                var counts = Math.Min(depth, Hashs.Count - clustered.Count);
+                var counts = Math.Min(depth, Hashs.Count - count);
                 vpTree.Search((src.Key, src.Value), counts, out outs, out dist);
 
-                var sresult = new List<string>();
+                var sresult = new List<(string, double)>();
                 for (int i = 0; i < outs.Length; i++)
                     if (dist[i] < threshold)
                     {
-                        sresult.Add(outs[i].Item1);
-                        clustered.Add(outs[i].Item1);
+                        sresult.Add((outs[i].Item1, dist[i]));
+                        if (dist[i] < 10)
+                        {
+                            if (!clustered.Contains(outs[i].Item1))
+                            {
+                                clustered.Add(outs[i].Item1);
+                                count++;
+                            }
+                        }
                     }
-                clustered.Add(src.Key);
+                sresult.RemoveAll(x => x.Item1 == src.Key);
+                sresult.Insert(0, (src.Key, 0));
                 result.Add(sresult);
                 outs = null;
                 dist = null;
-                progress?.Invoke((clustered.Count, Hashs.Count));
+                progress?.Invoke((count, Hashs.Count));
             }
 
             result.Sort((x, y) => y.Count.CompareTo(x.Count));
             return result;
+        }
+
+        List<List<string>> IImageSimilarity.Clustering(Action<(int, int)> progress, int depth, double threshold)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -296,7 +298,7 @@ namespace GalleryExplorer.Core
 
         private static int[,,] ConvertToArray(Bitmap bitmap)
         {
-            int[,,] convert = new int[3, 10, 10];
+            int[,,] convert = new int[3, 30, 30];
 
             BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
@@ -309,10 +311,10 @@ namespace GalleryExplorer.Core
 
             for (int y = 0; y < height; y++)
             {
-                int convertY = y * 10 / height;
+                int convertY = y * 30 / height;
                 for (int x = 0; x < width * 3; x++)
                 {
-                    int convertX = x * 10 / (width * 3);
+                    int convertX = x * 30 / (width * 3);
                     int rgb = x % 3;
                     int value = imageArray[y * stride + x];
                     convert[rgb, convertY, convertX] += value;
@@ -324,7 +326,7 @@ namespace GalleryExplorer.Core
             return convert;
         }
 
-        private static double GetCosineSimilarity(int[,,] a, int[,,] b)
+        public static double GetCosineSimilarity(int[,,] a, int[,,] b)
         {
             double magA2 = 0;
             double magB2 = 0;
@@ -332,9 +334,9 @@ namespace GalleryExplorer.Core
 
             for (int i = 0; i < 3; i++)
             {
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < 30; j++)
                 {
-                    for (int k = 0; k < 10; k++)
+                    for (int k = 0; k < 30; k++)
                     {
                         magA2 += Math.Pow(a[i, j, k], 2);
                         magB2 += Math.Pow(b[i, j, k], 2);
@@ -345,6 +347,14 @@ namespace GalleryExplorer.Core
 
             double magAB = Math.Sqrt(magA2 * magB2);
             return product / magAB;
+        }
+
+        public int[,,] MakeHash(string path)
+        {
+            var bitmap = new Bitmap(path);
+            var hash = ConvertToArray(bitmap);
+            bitmap.Dispose();
+            return hash;
         }
 
         public void AppendImage(string path)

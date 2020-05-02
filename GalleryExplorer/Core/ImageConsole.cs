@@ -126,13 +126,13 @@ namespace GalleryExplorer.Core
             using (var progressBar = new Console.ConsoleProgressBar())
             {
                 Console.Instance.WriteLine("클러스터링 중...");
-                clustered = iss.Clustering(x =>
-                {
-                    progressBar.SetProgress(x.Item1 / (float)x.Item2 * 100);
-                });
+                //clustered = iss.Clustering(x =>
+                //{
+                //    progressBar.SetProgress(x.Item1 / (float)x.Item2 * 100);
+                //});
             }
-            clustered.RemoveAll(x => x.Count == 1);
-            Console.Instance.WriteLine(clustered);
+            //clustered.RemoveAll(x => x.Count == 1);
+            //Console.Instance.WriteLine(clustered);
         }
 
         static void ProcessTest(string[] args)

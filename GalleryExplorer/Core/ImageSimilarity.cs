@@ -262,6 +262,7 @@ namespace GalleryExplorer.Core
                     if (dist[i] < threshold)
                     {
                         sresult.Add((outs[i].Item1, dist[i]));
+#if false
                         if (dist[i] < 10)
                         {
                             if (!clustered.Contains(outs[i].Item1))
@@ -270,16 +271,23 @@ namespace GalleryExplorer.Core
                                 count++;
                             }
                         }
+#endif
                     }
                 sresult.RemoveAll(x => x.Item1 == src.Key);
                 sresult.Insert(0, (src.Key, 0));
                 result.Add(sresult);
                 outs = null;
                 dist = null;
-                progress?.Invoke((count, Hashs.Count));
+                progress?.Invoke((++count, Hashs.Count));
             }
 
             result.Sort((x, y) => y.Count.CompareTo(x.Count));
+            result = result.GroupBy(x =>
+            {
+                var y = x.Select(z => z.Item1).ToList();
+                y.Sort();
+                return string.Join("|", y);
+            }).Select(x => x.First()).ToList();
             return result;
         }
 

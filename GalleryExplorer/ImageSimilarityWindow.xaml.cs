@@ -98,13 +98,54 @@ namespace GalleryExplorer
 
         private void FileOpen_Click(object sender, RoutedEventArgs e)
         {
+            var ofd = new OpenFileDialog();
+            ofd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            ofd.Multiselect = true;
+            ofd.Filter = "이미지 파일 (*.png, *.jpg, *.jpeg, *.bmp, *.webp)|*.png;*.jpg;*.jpeg;*.bmp;*.webp";
+            if (ofd.ShowDialog() == false)
+                return;
 
+            foreach (var file in ofd.FileNames)
+                if (!iss.Hashs.ContainsKey(file))
+                    iss.AppendImage(file);
+            Extends.Post(() => StatusText.Text = $"{ofd.FileNames.Length}개 이미지 파일(들)을 불러왔습니다.");
         }
 
         private void FindPhoto_Click(object sender, RoutedEventArgs e)
         {
+            double rate;
+            if (!double.TryParse(MaxRate.Text, out rate))
+            {
+                MessageBox.Show("클러스터링 최고 역치는 실수여야합니다!", "Gallery Explorer", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-        }
+            var ofd = new OpenFileDialog();
+            ofd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            ofd.Filter = "이미지 파일 (*.png, *.jpg, *.jpeg, *.bmp, *.webp)|*.png;*.jpg;*.jpeg;*.bmp;*.webp";
+            if (ofd.ShowDialog() == false)
+                return;
+
+            var hash = ImageSoftSimilarity.MakeSoftHash(ofd.FileName);
+            if (hash == null)
+            {
+                Extends.Post(() => StatusText.Text = $"'{ofd.FileName}'는 지원하는 이미지 파일이 아닌 것 같아요.");
+                return;
+            }
+            var result = iss.FindForSoft(hash, 100).Where(x => x.Item2 <= rate).ToList();
+            if (result.Count == 0)
+            {
+                Extends.Post(() => StatusText.Text = $"검색 결과가 없습니다 :(");
+                return;
+            }
+            else
+                Extends.Post(() => StatusText.Text = $"{result.Count}개 항목이 검색되었습니다.");
+
+            ImagePanel.Children.Clear();
+            result.ForEach(x => ImagePanel.Children.Add(new ImageElements(x.Item1, x.Item2)));
+            current = result.Select(x => x.Item1).ToList();
+            ImagePanel.Children.OfType<ImageElements>().ToList().ForEach(x => x.AdjustWidth((int)WidthSlider.Value));
+        } 
 
         private async void Clustering_Click(object sender, RoutedEventArgs e)
         {

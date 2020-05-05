@@ -462,6 +462,11 @@ namespace GalleryExplorer
             {
                 new ImageSimilarityWindow().Show();
             }
+            else if (tag == "Setting")
+            {
+                var dialog = new Settings();
+                await DialogHost.Show(dialog, "RootDialog");
+            }
             else if(tag == "Help")
             {
                 var dialog = new InfoMessage();

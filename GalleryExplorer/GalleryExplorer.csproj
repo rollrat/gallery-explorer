@@ -164,6 +164,9 @@
     <Compile Include="ImageSimilarityWindow.xaml.cs">
       <DependentUpon>ImageSimilarityWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SignalWindow.xaml.cs">
       <DependentUpon>SignalWindow.xaml</DependentUpon>
     </Compile>
@@ -246,6 +249,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SignalWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

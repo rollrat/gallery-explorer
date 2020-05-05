@@ -269,7 +269,7 @@
                         </StackPanel>
                     </ListBoxItem>
 
-                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Setting" IsEnabled="False">
+                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Setting">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="설정" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
                         </ListBoxItem.ToolTip>

@@ -4,9 +4,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GalleryExplorer"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local1="clr-namespace:GalleryExplorer.Controls"
         mc:Ignorable="d"
         Title="아카이브" Height="450" Width="800">
-    <Grid>
-        
+    <Grid Background="#181818">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="#232323" Height="60">
+            <Grid.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </Grid.Resources>
+            <StackPanel Orientation="Horizontal">
+                <!--<Button Click="ProjectOpen_Click" HorizontalAlignment="Left" Margin="8 0 0 0" Width="60" Height="40" Padding="0" Cursor="Hand" BorderBrush="#303030" Background="#303030">
+                    <materialDesign:PackIcon Kind="FileDocument" Height="24" Width="24" Foreground="#717171"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="분석 정보 열기" HasDropShadow="True"/>
+                    </Button.ToolTip>
+                </Button>-->
+            </StackPanel>
+            <!--<Slider x:Name="WidthSlider" ValueChanged="Slider_ValueChanged" TickFrequency="5" Orientation="Horizontal" Minimum="100" Maximum="600" Value="400" Width="100" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 16 0" />-->
+        </Grid>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <local1:FallsPanel x:Name="ImagePanel"/>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Background="#232323" Height="40" Orientation="Horizontal">
+            <ProgressBar x:Name="StatusProgress" Visibility="Collapsed" Margin="16 0 0 0" Style="{StaticResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" Width="20" Height="20"/>
+            <TextBlock x:Name="StatusText" Text="대기" FontSize="13" Foreground="White" VerticalAlignment="Center" Margin="16 0 0 0"/>
+        </StackPanel>
     </Grid>
 </Window>

@@ -7,8 +7,9 @@
              mc:Ignorable="d" 
              xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             d:DesignHeight="300" d:DesignWidth="300" MaxWidth="250" MinWidth="250" Padding="5" MouseDoubleClick="UserControl_MouseDoubleClick">
-    
+             d:DesignHeight="300" d:DesignWidth="300" MaxWidth="250" MinWidth="250" Padding="5" MouseDoubleClick="UserControl_MouseDoubleClick"
+             MouseEnter="UserControl_MouseEnter">
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -100,6 +101,23 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+
+            <!--<Popup x:Name="InfoPopup" Placement="Relative">
+                <materialDesign:Card Background="#2C2C2C" MouseMove="Card_MouseMove" MouseLeave="Card_MouseLeave">
+                    <materialDesign:Card.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml"/>
+                                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml"/>
+                                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml"/>
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </materialDesign:Card.Resources>
+                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <TextBlock x:Name="PopupTitle" FontWeight="Bold" TextWrapping="Wrap" Foreground="#E2E2E2"/>
+                    </Grid>
+                </materialDesign:Card>
+            </Popup>-->
 
             <Image x:Name="Image" Grid.Row="0" RenderOptions.BitmapScalingMode="Fant" Stretch="Uniform"/>
             <StackPanel Grid.Row="1" Margin="8 4 8 4">

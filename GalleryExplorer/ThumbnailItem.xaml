@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             MouseUp="UserControl_MouseUp"
              d:DesignHeight="300" d:DesignWidth="300" MaxWidth="250" MinWidth="250" Padding="5" MouseDoubleClick="UserControl_MouseDoubleClick">
     
     <UserControl.Resources>
@@ -61,6 +62,42 @@
                     <DoubleAnimation Storyboard.TargetProperty="ScaleY"
                                               Storyboard.TargetName="scale" To="1.0"          
                                               Duration="0:0:0.1" />
+                    <DoubleAnimation Storyboard.TargetProperty="X"
+                                              Storyboard.TargetName="trans" To="0"          
+                                              Duration="0:0:0.1" />
+                    <DoubleAnimation Storyboard.TargetProperty="Y"
+                                              Storyboard.TargetName="trans" To="0"          
+                                              Duration="0:0:0.1" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="MouseLeftButtonDown">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="ScaleX"
+                                              Storyboard.TargetName="scale" To="0.95"
+                                              Duration="0:0:0.1" />
+                    <DoubleAnimation Storyboard.TargetProperty="ScaleY"
+                                              Storyboard.TargetName="scale" To="0.95"          
+                                              Duration="0:0:0.1" />
+                    <DoubleAnimation Storyboard.TargetProperty="X"
+                                              Storyboard.TargetName="trans" To="6"          
+                                              Duration="0:0:0.1" />
+                    <DoubleAnimation Storyboard.TargetProperty="Y"
+                                              Storyboard.TargetName="trans" To="6"          
+                                              Duration="0:0:0.1" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="MouseLeftButtonUp">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="ScaleX"
+                                          Storyboard.TargetName="scale" To="1" 
+                                          Duration="0:0:0.1" />
+                    <DoubleAnimation Storyboard.TargetProperty="ScaleY"
+                                          Storyboard.TargetName="scale" To="1" 
+                                          Duration="0:0:0.1" />
                     <DoubleAnimation Storyboard.TargetProperty="X"
                                               Storyboard.TargetName="trans" To="0"          
                                               Duration="0:0:0.1" />

@@ -3,6 +3,7 @@
 
 using GalleryExplorer.Core;
 using GalleryExplorer.Domain;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,6 +30,7 @@ namespace GalleryExplorer
     public partial class ThumbnailItem : UserControl
     {
         public DCInsidePageArticle Article { get; set; }
+        DCInsideArticle downloaded_article { get; set; }
         string URL;
 
         public ThumbnailItem(DCInsidePageArticle article, bool r2l = false)
@@ -123,10 +125,10 @@ namespace GalleryExplorer
                         });
                         return;
                     }
-                    var page = DCInsideUtils.ParseBoardView(html);
-                    if (page.ImagesLink.Count == 0) return;
+                    downloaded_article = DCInsideUtils.ParseBoardView(html);
+                    if (downloaded_article.ImagesLink.Count == 0) return;
                     temp_file = TemporaryFiles.UseNew();
-                    NetTools.DownloadFile(page.ImagesLink[0], temp_file);
+                    NetTools.DownloadFile(downloaded_article.ImagesLink[0], temp_file);
 
                     Extends.Post(() => AnimationBehavior.SetSourceUri(Image, new Uri(temp_file)));
                 });
@@ -138,5 +140,33 @@ namespace GalleryExplorer
             System.Diagnostics.Process.Start(URL);
         }
 
+        bool opened = false;
+        private async void UserControl_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!opened)
+            {
+                //opened = true;
+                //if (Icon.Kind == PackIconKind.TrashCanOutline)
+                //{
+                //    opened = false;
+                //    return;
+                //}
+                //if (downloaded_article == null)
+                //{
+                //    var html = NetTools.DownloadString(URL);
+                //    if (html == null || html == "")
+                //    {
+                //        opened = false;
+                //        return;
+                //    }
+                //    downloaded_article = DCInsideUtils.ParseBoardView(html);
+                //}
+                ////var bv = new BodyView(downloaded_article);
+                ////await DialogHost.Show(bv, "RootDialog");
+                //opened = false;
+            }
+            else
+                DialogHost.CloseDialogCommand.Execute(null, null);
+        }
     }
 }

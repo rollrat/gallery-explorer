@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GalleryExplorer"
         mc:Ignorable="d"
-        Title="아카이브" Height="450" Width="800">
+        Title="아카이브" Height="232" Width="504">
     <Grid>
-        
+
     </Grid>
 </Window>

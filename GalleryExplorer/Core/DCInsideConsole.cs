@@ -8,7 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -25,6 +27,9 @@ namespace GalleryExplorer.Core
         [CommandLine("--json-to-msgpack", CommandType.ARGUMENTS, ArgumentsCount = 1, Help = "use --json-to-msgpack <Source>",
             Info = "디시인사이드 갤러리 데이터 정보인 Json 형식을 MessagePack 형식으로 바꿉니다.")]
         public string[] JsonToMessagePack;
+        [CommandLine("--archive", CommandType.ARGUMENTS, ArgumentsCount = 1, Help = "use --json-to-msgpack <Count>",
+            Info = "현재 로딩된 갤러리의 게시물들을 아카이브합니다. <Count>는 게시물의 no를 내림차순으로 정렬했을 때 첫 번째 요소부터 아카이브할 게시물들의 개수입니다.")]
+        public string[] Archive;
 
         [CommandLine("--test", CommandType.ARGUMENTS, Help = "use --test <what>",
             Info = "테스트 명령을 실행합니다.")]
@@ -57,6 +62,10 @@ namespace GalleryExplorer.Core
             else if (option.JsonToMessagePack != null)
             {
                 ProcessJsonToMessagePack(option.JsonToMessagePack);
+            }
+            else if (option.Archive != null)
+            {
+                ProcessArchive(option.Archive);
             }
 
             return true;
@@ -153,7 +162,7 @@ namespace GalleryExplorer.Core
         static void ProcessJsonToMessagePack(string[] args)
         {
             var src = JsonConvert.DeserializeObject<DCInsideGalleryModel>(File.ReadAllText(args[0]));
-            var x = Path.Combine(Path.GetDirectoryName(args[0]),Path.GetFileNameWithoutExtension(args[0]) + "-index.txt");
+            var x = Path.Combine(Path.GetDirectoryName(args[0]), Path.GetFileNameWithoutExtension(args[0]) + "-index.txt");
 
             foreach (var s in src.articles)
             {
@@ -166,6 +175,47 @@ namespace GalleryExplorer.Core
             using (BinaryWriter sw = new BinaryWriter(fsStream))
             {
                 sw.Write(bbb);
+            }
+        }
+
+        static void ProcessArchive(string[] args)
+        {
+            var counts = Convert.ToInt32(args[0]);
+
+            var invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            var sp = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Archive",
+                $"{DCGalleryAnalyzer.Instance.Model.gallery_name} ({DCGalleryAnalyzer.Instance.Model.gallery_id})");
+
+            Directory.CreateDirectory(sp);
+
+            for (int i = 0; i < counts; i++)
+            {
+                var article = DCGalleryAnalyzer.Instance.Articles[i];
+                var ttitle = $"{article.title}";
+                foreach (char c in invalid)
+                    ttitle = ttitle.Replace(c.ToString(), "");
+
+                string url;
+
+                if (DCGalleryAnalyzer.Instance.Model.is_minor_gallery)
+                    url = $"https://gall.dcinside.com/mgallery/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
+                else
+                    url = $"https://gall.dcinside.com/board/view/?id={DCGalleryAnalyzer.Instance.Model.gallery_id}&no={article.no}";
+
+                var html = NetTools.DownloadString(url);
+                var info = DCInsideUtils.ParseBoardView(html, DCGalleryAnalyzer.Instance.Model.is_minor_gallery);
+
+                File.WriteAllText(Path.Combine(sp, $"[{article.no}]-body-{ttitle}.json"), JsonConvert.SerializeObject(info, Formatting.Indented));
+
+                int com;
+                if (int.TryParse(info.CommentCount.Replace(",", ""), out com) && com > 0)
+                {
+                    var comments = DCInsideUtils.GetAllComments(DCGalleryAnalyzer.Instance.Model.gallery_id, article.no).Result;
+                    File.WriteAllText(Path.Combine(sp, $"[{article.no}]-comments-{ttitle}.json"), JsonConvert.SerializeObject(comments, Formatting.Indented));
+                }
+
+                Console.Instance.WriteLine($"{counts}중 {i}개 완료");
+                Thread.Sleep(700);
             }
         }
     }

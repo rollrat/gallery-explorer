@@ -27,6 +27,9 @@ namespace GalleryExplorer.Core
         public List<string> FilesName { get; set; }
         public string Archive { get; set; }
         public string ESNO { get; set; }
+        public string Views { get; set; }
+        public string ReplyCount { get; set; }
+        public string CommentCount { get; set; }
     }
 
     [MessagePackObject]
@@ -95,7 +98,7 @@ namespace GalleryExplorer.Core
         public string a_my_cmt;
         public string reply_w;
         public string gallog_icon;
-        public bool vr_player;
+        public string vr_player;
         public string vr_player_tag;
         public int next_type;
     }
@@ -290,6 +293,9 @@ namespace GalleryExplorer.Core
                 article.Class = node.SelectSingleNode("//span[@class='title_headtext']").InnerText;
             article.Contents = node.SelectSingleNode("//div[@class='writing_view_box']").InnerHtml;
             article.Title = HttpUtility.HtmlDecode(node.SelectSingleNode("//span[@class='title_subject']").InnerText);
+            article.Views = node.SelectSingleNode("//span[@class='gall_count']").InnerText.Trim().Split(' ').Last().Replace(",", "");
+            article.ReplyCount = node.SelectSingleNode("//span[@class='gall_reply_num']").InnerText.Trim().Split(' ').Last().Replace(",", "");
+            article.CommentCount = node.SelectSingleNode("//span[@class='gall_comment']").InnerText.Trim().Split(' ').Last().Replace(",", "");
             try
             {
                 article.ImagesLink = node.SelectNodes("//ul[@class='appending_file']/li").Select(x => x.SelectSingleNode("./a").GetAttributeValue("href", "")).ToList();

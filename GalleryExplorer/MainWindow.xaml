@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GalleryExplorer"
-        mc:Ignorable="d"
+        mc:Ignorable="d" AllowsTransparency="False"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:controls1="clr-namespace:GalleryExplorer.Controls"
         LocationChanged="Window_LocationChanged"

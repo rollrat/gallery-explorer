@@ -1,4 +1,4 @@
-﻿// This source code is a part of DCInside Gallery Explorer Project.
+﻿// This source code is a part of Gallery Explorer Project.
 // Copyright (C) 2020. rollrat. Licensed under the MIT Licence.
 
 using Newtonsoft.Json;

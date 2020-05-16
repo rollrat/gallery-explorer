@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalleryExplorer", "GalleryExplorer\GalleryExplorer.csproj", "{3BD47C3B-62E1-4BF1-8CB5-B534814A9480}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalleryArchive", "GalleryArchive\GalleryArchive.csproj", "{6ABC962D-A4D3-477B-9CB4-95C21A1B5909}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,14 @@ Global
 		{3BD47C3B-62E1-4BF1-8CB5-B534814A9480}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3BD47C3B-62E1-4BF1-8CB5-B534814A9480}.Release|x64.ActiveCfg = Release|x64
 		{3BD47C3B-62E1-4BF1-8CB5-B534814A9480}.Release|x64.Build.0 = Release|x64
+		{6ABC962D-A4D3-477B-9CB4-95C21A1B5909}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ABC962D-A4D3-477B-9CB4-95C21A1B5909}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ABC962D-A4D3-477B-9CB4-95C21A1B5909}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6ABC962D-A4D3-477B-9CB4-95C21A1B5909}.Debug|x64.Build.0 = Debug|Any CPU
+		{6ABC962D-A4D3-477B-9CB4-95C21A1B5909}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ABC962D-A4D3-477B-9CB4-95C21A1B5909}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ABC962D-A4D3-477B-9CB4-95C21A1B5909}.Release|x64.ActiveCfg = Release|Any CPU
+		{6ABC962D-A4D3-477B-9CB4-95C21A1B5909}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

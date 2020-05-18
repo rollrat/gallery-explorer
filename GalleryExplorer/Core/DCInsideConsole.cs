@@ -27,7 +27,10 @@ namespace GalleryExplorer.Core
         [CommandLine("--json-to-msgpack", CommandType.ARGUMENTS, ArgumentsCount = 1, Help = "use --json-to-msgpack <Source>",
             Info = "디시인사이드 갤러리 데이터 정보인 Json 형식을 MessagePack 형식으로 바꿉니다.")]
         public string[] JsonToMessagePack;
-        [CommandLine("--archive", CommandType.ARGUMENTS, ArgumentsCount = 1, Help = "use --json-to-msgpack <Count>",
+        [CommandLine("--msgpack-to-json", CommandType.ARGUMENTS, ArgumentsCount = 1, Help = "use --msgpack-to-json <Source>",
+            Info = "디시인사이드 갤러리 데이터 정보인 MessagePack 형식을 Json 형식으로 바꿉니다.")]
+        public string[] MessagePackToJson;
+        [CommandLine("--archive", CommandType.ARGUMENTS, ArgumentsCount = 1, Help = "use --archive <Count>",
             Info = "현재 로딩된 갤러리의 게시물들을 아카이브합니다. <Count>는 게시물의 no를 내림차순으로 정렬했을 때 첫 번째 요소부터 아카이브할 게시물들의 개수입니다.")]
         public string[] Archive;
 
@@ -63,9 +66,17 @@ namespace GalleryExplorer.Core
             {
                 ProcessJsonToMessagePack(option.JsonToMessagePack);
             }
+            else if (option.MessagePackToJson != null)
+            {
+                ProcessMessagePackToJson(option.MessagePackToJson);
+            }
             else if (option.Archive != null)
             {
                 ProcessArchive(option.Archive);
+            }
+            else if (option.Test != null)
+            {
+                ProcessTest(option.Test);
             }
 
             return true;
@@ -178,6 +189,18 @@ namespace GalleryExplorer.Core
             }
         }
 
+        static void ProcessMessagePackToJson(string[] args)
+        {
+            var src = MessagePackSerializer.Deserialize<DCInsideGalleryModel>(File.ReadAllBytes(args[0]));
+            var x = Path.Combine(Path.GetDirectoryName(args[0]), Path.GetFileNameWithoutExtension(args[0]) + ".json");
+
+            using (StreamWriter file = File.CreateText(x))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, src);
+            }
+        }
+
         static void ProcessArchive(string[] args)
         {
             var counts = Convert.ToInt32(args[0]);
@@ -216,6 +239,36 @@ namespace GalleryExplorer.Core
 
                 Console.Instance.WriteLine($"{counts}중 {i}개 완료");
                 Thread.Sleep(700);
+            }
+        }
+
+        static void ProcessTest(string[] args)
+        {
+            switch (args[0])
+            {
+                case "1":
+                    DCInsideArchive.Instance.Load(@"툴갤 아카이브-index.json");
+                    break;
+
+                case "2":
+                    //DCInsideArchive.Instance.Query.QueryContentHardContainsBody("로리").Save();
+                    DCInsideArchive.Instance.Query.QueryCommentByIp("182.224").Save();
+                    break;
+
+                case "3":
+                    {
+                        var cc = DCInsideArchive.Instance.Query.QueryCommentByIp("182.224");
+                        var query = DCInsideArchiveQueryHelper.to_linear(DCInsideArchiveQueryHelper.make_tree("CommentAuthorIp[182.224]"));
+                        var mm = cc.Results.Select(x => DCInsideArchiveQueryHelper.match_comment(query, x)).ToList();
+                    }
+                    break;
+
+                case "4":
+                    {
+                        var query = DCInsideArchiveQueryHelper.to_linear(DCInsideArchiveQueryHelper.make_tree("CommentAuthorIp[182.224] + ContentAuthorIp[182.224]"));
+                        DCInsideArchive.Instance.Query.Query(query).Save();
+                    }
+                    break;
             }
         }
     }

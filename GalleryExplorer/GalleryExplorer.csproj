@@ -154,6 +154,7 @@
     <Compile Include="Controls\ArrangePanel.cs" />
     <Compile Include="Controls\FallsPanel.cs" />
     <Compile Include="Controls\NonTopmostPopup.cs" />
+    <Compile Include="Core\DCInsideArchive.cs" />
     <Compile Include="Core\ImageConsole.cs" />
     <Compile Include="Core\ImageSimilarity.cs" />
     <Compile Include="Core\VPTree.cs" />

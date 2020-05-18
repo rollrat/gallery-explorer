@@ -498,9 +498,15 @@ namespace GalleryExplorer.Core
                     builder.Append(query_string[i]);
                 else
                 {
-                    for (; i < query_string.Length && !char.IsWhiteSpace(query_string[i]); i++)
+                    var scope = false;
+                    for (; i < query_string.Length && (scope || !char.IsWhiteSpace(query_string[i])); i++)
                     {
-                        if ("()-+&|~".Contains(query_string[i])) break;
+                        if (query_string[i] == '[')
+                            scope = true;
+                        else if (query_string[i] == ']')
+                            scope = false;
+                        else if ("()-+&|~".Contains(query_string[i]))
+                            break;
                         builder.Append(query_string[i]);
                     }
                 }

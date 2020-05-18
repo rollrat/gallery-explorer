@@ -265,7 +265,7 @@ namespace GalleryExplorer.Core
 
                 case "4":
                     {
-                        var query = DCInsideArchiveQueryHelper.to_linear(DCInsideArchiveQueryHelper.make_tree("CommentAuthorIp[182.224] + ContentAuthorIp[182.224]"));
+                        var query = DCInsideArchiveQueryHelper.to_linear(DCInsideArchiveQueryHelper.make_tree("CommentAuthorIp[182.224, 14.37]"));
                         DCInsideArchive.Instance.Query.Query(query).Save();
                     }
                     break;

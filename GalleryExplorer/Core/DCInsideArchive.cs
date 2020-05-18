@@ -714,6 +714,8 @@ namespace GalleryExplorer.Core
 
                 if (query.is_operator == false)
                 {
+                    var separate = query.token.Split(',').Select(x => x.Trim()).ToList();
+
                     switch (query.token_type)
                     {
                         case DCInsideArchiveQueryTokenType.None:
@@ -721,13 +723,19 @@ namespace GalleryExplorer.Core
                             Logger.Instance.PushError(query);
                             throw new Exception($"Query system error!");
 
+                        case DCInsideArchiveQueryTokenType.Common:
+                            if (separate.All(x => am.info.title.Contains(x)))
+                                checker[i] = true;
+                            else if (separate.All(x => am.raw.Contains(x)))
+                                checker[i] = true;
+                            break;
+
                             ///
                             /// 단순 단어 매칭
                             /// 어떤 단어가 문장에 포함되어 있다면 pass입니다.
                             ///
-                        case DCInsideArchiveQueryTokenType.Common:
                         case DCInsideArchiveQueryTokenType.BodyContainsSimple:
-                            if (am.raw.Contains(query.token))
+                            if (separate.All(x => am.raw.Contains(x)))
                                 checker[i] = true;
                             break;
 
@@ -736,8 +744,11 @@ namespace GalleryExplorer.Core
                             /// BodyContainsSimple과 같지만 HTML Decoding을 적용하여 검색합니다.
                             ///
                         case DCInsideArchiveQueryTokenType.BodyContainsHard:
-                            if (HttpUtility.HtmlDecode(am.raw.ToHtmlNode().InnerText).Contains(query.token))
-                                checker[i] = true;
+                            {
+                                var format = HttpUtility.HtmlDecode(am.raw.ToHtmlNode().InnerText);
+                                if (separate.All(x => format.Contains(x)))
+                                    checker[i] = true;
+                            }
                             break;
 
                             ///
@@ -745,15 +756,15 @@ namespace GalleryExplorer.Core
                             /// 닉네임 아이피 아이디를 비교해 매칭된다면 pass입니다.
                             ///
                         case DCInsideArchiveQueryTokenType.ContentAuthorNick:
-                            if (am.info.nick == query.token)
+                            if (separate.Any(x => am.info.nick == x))
                                 checker[i] = true;
                             break;
                         case DCInsideArchiveQueryTokenType.ContentAuthorIp:
-                            if (am.info.ip != null && am.info.ip == query.token)
+                            if (separate.Any(x => am.info.ip == x))
                                 checker[i] = true;
                             break;
                         case DCInsideArchiveQueryTokenType.ContentAuthorId:
-                            if (am.info.uid != null && am.info.uid == query.token)
+                            if (am.info.uid != null && separate.Any(x => am.info.uid == x))
                                 checker[i] = true;
                             break;
 
@@ -825,7 +836,7 @@ namespace GalleryExplorer.Core
                             /// 제목에 내용이 포함되어 있다면 pass입니다.
                             ///
                         case DCInsideArchiveQueryTokenType.TitleContains:
-                            if (am.info.title.Contains(query.token))
+                            if (separate.All(x => am.info.title.Contains(x)))
                                 checker[i] = true;
                             break;
                             
@@ -836,7 +847,7 @@ namespace GalleryExplorer.Core
                         case DCInsideArchiveQueryTokenType.ContentContainsSimple:
                             if (am.raw.Contains(query.token))
                                 checker[i] = true;
-                            if (am.comments != null && am.comments.Any(x => x.memo.Contains(query.token)))
+                            else if (am.comments != null && am.comments.Any(x => x.memo.Contains(query.token)))
                                 checker[i] = true;
                             break;
                             
@@ -847,7 +858,7 @@ namespace GalleryExplorer.Core
                         case DCInsideArchiveQueryTokenType.ContentContainsHard:
                             if (HttpUtility.HtmlDecode(am.raw.ToHtmlNode().InnerText).Contains(query.token))
                                 checker[i] = true;
-                            if (am.comments != null && am.comments.Any(x => HttpUtility.HtmlDecode(x.memo.ToHtmlNode().InnerText).Contains(query.token)))
+                            else if (am.comments != null && am.comments.Any(x => HttpUtility.HtmlDecode(x.memo.ToHtmlNode().InnerText).Contains(query.token)))
                                 checker[i] = true;
                             break;
                             
@@ -856,7 +867,7 @@ namespace GalleryExplorer.Core
                             /// 어떤 단어가 문장에 포함되어 있다면 pass입니다.
                             ///
                         case DCInsideArchiveQueryTokenType.CommentContainsSimple:
-                            if (am.comments != null && am.comments.Any(x => x.memo.Contains(query.token)))
+                            if (am.comments != null && am.comments.Any(x => separate.All(y => x.memo.Contains(y))))
                                 checker[i] = true;
                             break;
 
@@ -865,7 +876,7 @@ namespace GalleryExplorer.Core
                             /// BodyContainsSimple과 같지만 HTML Decoding을 적용하여 검색합니다.
                             ///
                         case DCInsideArchiveQueryTokenType.CommentContainsHard:
-                            if (am.comments != null && am.comments.Any(x => HttpUtility.HtmlDecode(x.memo.ToHtmlNode().InnerText).Contains(query.token)))
+                            if (am.comments != null && am.comments.Any(x => separate.All(y => HttpUtility.HtmlDecode(x.memo.ToHtmlNode().InnerText).Contains(y))))
                                 checker[i] = true;
                             break;
                             
@@ -874,15 +885,15 @@ namespace GalleryExplorer.Core
                             /// 닉네임 아이피 아이디를 비교해 하나라도 매칭된다면 pass입니다.
                             ///
                         case DCInsideArchiveQueryTokenType.CommentAuthorNick:
-                            if (am.comments != null && am.comments.Any(x => x.name == query.token))
+                            if (am.comments != null && am.comments.Any(x => separate.Any(y => x.name == y)))
                                 checker[i] = true;
                             break;
                         case DCInsideArchiveQueryTokenType.CommentAuthorIp:
-                            if (am.comments != null && am.comments.Any(x => x.ip == query.token))
+                            if (am.comments != null && am.comments.Any(x => separate.Any(y => x.ip == y)))
                                 checker[i] = true;
                             break;
                         case DCInsideArchiveQueryTokenType.CommentAuthorId:
-                            if (am.comments != null && am.comments.Any(x => x.user_id == query.token))
+                            if (am.comments != null && am.comments.Any(x => separate.Any(y => x.user_id == y)))
                                 checker[i] = true;
                             break;
 
@@ -932,6 +943,8 @@ namespace GalleryExplorer.Core
 
                 if (query.is_operator == false)
                 {
+                    var separate = query.token.Split(',').Select(x => x.Trim()).ToList();
+
                     switch (query.token_type)
                     {
                         case DCInsideArchiveQueryTokenType.None:
@@ -945,7 +958,7 @@ namespace GalleryExplorer.Core
                             ///
                         case DCInsideArchiveQueryTokenType.Common:
                         case DCInsideArchiveQueryTokenType.CommentContainsSimple:
-                            if (ce.memo.Contains(query.token))
+                            if (separate.All(x => ce.memo.Contains(x)))
                                 checker[i] = true;
                             break;
 
@@ -954,7 +967,7 @@ namespace GalleryExplorer.Core
                             /// BodyContainsSimple과 같지만 HTML Decoding을 적용하여 검색합니다.
                             ///
                         case DCInsideArchiveQueryTokenType.CommentContainsHard:
-                            if (HttpUtility.HtmlDecode(ce.memo).Contains(query.token))
+                            if (separate.All(x => HttpUtility.HtmlDecode(ce.memo).Contains(x)))
                                 checker[i] = true;
                             break;
 
@@ -963,15 +976,15 @@ namespace GalleryExplorer.Core
                             /// 닉네임 아이피 아이디를 비교해 매칭된다면 pass입니다.
                             ///
                         case DCInsideArchiveQueryTokenType.CommentAuthorNick:
-                            if (ce.name == query.token)
+                            if (separate.Any(x => ce.name == x))
                                 checker[i] = true;
                             break;
                         case DCInsideArchiveQueryTokenType.CommentAuthorIp:
-                            if (ce.ip == query.token)
+                            if (separate.Any(x => ce.ip == x))
                                 checker[i] = true;
                             break;
                         case DCInsideArchiveQueryTokenType.CommentAuthorId:
-                            if (ce.user_id == query.token)
+                            if (separate.Any(x => ce.user_id == x))
                                 checker[i] = true;
                             break;
 

@@ -34,6 +34,16 @@ namespace GalleryExplorer.Core
             Info = "현재 로딩된 갤러리의 게시물들을 아카이브합니다. <Count>는 게시물의 no를 내림차순으로 정렬했을 때 첫 번째 요소부터 아카이브할 게시물들의 개수입니다.")]
         public string[] Archive;
 
+        [CommandLine("--archive-load", CommandType.ARGUMENTS, ArgumentsCount = 1, Help = "use --archive-load <Path>",
+            Info = "지정된 아카이브 파일을 로딩합니다.")]
+        public string[] ArchiveLoad;
+        [CommandLine("--archive-search-article", CommandType.ARGUMENTS, ArgumentsCount = 1, Help = "use --archive-search-article <Search>",
+            Info = "아카이브에서 글을 검색합니다. 검색결과는 저장됩니다.")]
+        public string[] ArchiveSearchArticle;
+        [CommandLine("--archive-search-comment", CommandType.ARGUMENTS, ArgumentsCount = 1, Help = "use --archive-search-comment <Search>",
+            Info = "아카이브에서 댓글을 검색합니다. 검색결과는 저장됩니다.")]
+        public string[] ArchiveSearchComment;
+
         [CommandLine("--test", CommandType.ARGUMENTS, Help = "use --test <what>",
             Info = "테스트 명령을 실행합니다.")]
         public string[] Test;
@@ -73,6 +83,18 @@ namespace GalleryExplorer.Core
             else if (option.Archive != null)
             {
                 ProcessArchive(option.Archive);
+            }
+            else if (option.ArchiveLoad != null)
+            {
+                ProcessArchiveLoad(option.ArchiveLoad);
+            }
+            else if (option.ArchiveSearchArticle != null)
+            {
+                ProcessArchiveSearchArticle(option.ArchiveSearchArticle);
+            }
+            else if (option.ArchiveSearchComment != null)
+            {
+                ProcessArchiveSearchComment(option.ArchiveSearchComment);
             }
             else if (option.Test != null)
             {
@@ -240,6 +262,31 @@ namespace GalleryExplorer.Core
                 Console.Instance.WriteLine($"{counts}중 {i}개 완료");
                 Thread.Sleep(700);
             }
+        }
+
+        static void ProcessArchiveLoad(string[] args)
+        {
+            DCInsideArchive.Instance.Load(args[0]);
+        }
+
+        static void ProcessArchiveSearchArticle(string[] args)
+        {
+            var query = DCInsideArchiveQueryHelper.to_linear(DCInsideArchiveQueryHelper.make_tree(args[0]));
+            var result = DCInsideArchive.Instance.Query.Query(query);
+            result.Save();
+
+            foreach (var rr in result.Results)
+                Console.Instance.WriteLine($"[{rr.info.no}] {rr.info.title}");
+        }
+
+        static void ProcessArchiveSearchComment(string[] args)
+        {
+            var query = DCInsideArchiveQueryHelper.to_linear(DCInsideArchiveQueryHelper.make_tree(args[0]));
+            var result = DCInsideArchive.Instance.Query.QueryComment(query);
+            result.Save();
+
+            foreach (var rr in result.Results)
+                Console.Instance.WriteLine($"[{rr.no}] {rr.name}({rr.ip}{rr.user_id}): {rr.memo}");
         }
 
         static void ProcessTest(string[] args)

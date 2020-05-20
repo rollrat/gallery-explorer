@@ -32,6 +32,7 @@ namespace GalleryExplorer
         public DCInsidePageArticle Article { get; set; }
         DCInsideArticle downloaded_article { get; set; }
         string URL;
+        int image_index = 0;
 
         public ThumbnailItem(DCInsidePageArticle article, bool r2l = false)
         {
@@ -140,33 +141,45 @@ namespace GalleryExplorer
             System.Diagnostics.Process.Start(URL);
         }
 
-        bool opened = false;
-        private async void UserControl_MouseUp(object sender, MouseButtonEventArgs e)
+        //bool opened = false;
+        private void UserControl_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (!opened)
+            if (downloaded_article.ImagesLink.Count == 1)
+                return;
+            image_index = (image_index + 1) % downloaded_article.ImagesLink.Count;
+
+            Task.Run(() =>
             {
-                //opened = true;
-                //if (Icon.Kind == PackIconKind.TrashCanOutline)
-                //{
-                //    opened = false;
-                //    return;
-                //}
-                //if (downloaded_article == null)
-                //{
-                //    var html = NetTools.DownloadString(URL);
-                //    if (html == null || html == "")
-                //    {
-                //        opened = false;
-                //        return;
-                //    }
-                //    downloaded_article = DCInsideUtils.ParseBoardView(html);
-                //}
-                ////var bv = new BodyView(downloaded_article);
-                ////await DialogHost.Show(bv, "RootDialog");
-                //opened = false;
-            }
-            else
-                DialogHost.CloseDialogCommand.Execute(null, null);
+                temp_file = TemporaryFiles.UseNew();
+                NetTools.DownloadFile(downloaded_article.ImagesLink[image_index], temp_file);
+
+                Extends.Post(() => AnimationBehavior.SetSourceUri(Image, new Uri(temp_file)));
+            });
+
+            //if (!opened)
+            //{
+            //    //opened = true;
+            //    //if (Icon.Kind == PackIconKind.TrashCanOutline)
+            //    //{
+            //    //    opened = false;
+            //    //    return;
+            //    //}
+            //    //if (downloaded_article == null)
+            //    //{
+            //    //    var html = NetTools.DownloadString(URL);
+            //    //    if (html == null || html == "")
+            //    //    {
+            //    //        opened = false;
+            //    //        return;
+            //    //    }
+            //    //    downloaded_article = DCInsideUtils.ParseBoardView(html);
+            //    //}
+            //    ////var bv = new BodyView(downloaded_article);
+            //    ////await DialogHost.Show(bv, "RootDialog");
+            //    //opened = false;
+            //}
+            //else
+            //    DialogHost.CloseDialogCommand.Execute(null, null);
         }
     }
 }

@@ -4,9 +4,249 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GalleryExplorer"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:controls1="clr-namespace:GalleryExplorer.Controls"
         mc:Ignorable="d"
-        Title="아카이브" Height="232" Width="504">
-    <Grid>
+        Loaded="Window_Loaded"
+        Title="아카이브 검색기" Height="567" Width="1034">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DialogHost.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Grey.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
-    </Grid>
+    <materialDesign:DialogHost x:Name="RootDialogHost" Identifier="RootDialog">
+        <Grid Background="#181818">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="#232323" Height="60">
+                <Grid MaxHeight="50" MaxWidth="570" Margin="50 0 50 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--<Button Grid.Column="1" x:Name="FuzzingButton" Panel.ZIndex="1" HorizontalAlignment="Right" Click="FuzzingButton_Click" Margin="0 0 4 0">
+                        <Button.Resources>
+                            <Storyboard x:Key="GlowOn" x:Name="GlowOn">
+                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(Effect).Opacity">
+                                    <SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                            <Storyboard x:Key="GlowOff" x:Name="GlowOff">
+                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(Effect).Opacity">
+                                    <SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect x:Name="DownArrowShadow"  BlurRadius="10" Opacity="0" ShadowDepth="0" Color="White"/>
+                        </Button.Effect>
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                        <Button.ToolTip>
+                            <ToolTip Content="Fuzzy" Placement="RelativePoint" PlacementRectangle="-15,45,0,0" HasDropShadow="True">
+                                <ToolTip.Resources>
+                                    <ResourceDictionary>
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToolTip.xaml"/>
+                                            <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
+                                            <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml"/>
+                                        </ResourceDictionary.MergedDictionaries>
+                                    </ResourceDictionary>
+                                </ToolTip.Resources>
+                            </ToolTip>
+                        </Button.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon x:Name="FuzzingIcon" Kind="LightningBolt" Foreground="White" Height="19" Width="19" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </StackPanel>
+                    </Button>-->
+
+                    <TextBox x:Name="SearchText" PreviewKeyDown="SearchText_KeyDown" Grid.Column="1" Height="30" BorderBrush="#303030" Background="#121212" Text="검색" Foreground="#E2E2E2" FontSize="15" Padding="3" IsEnabled="False"/>
+
+                    <controls1:NonTopmostPopup x:Name="AutoComplete" PlacementTarget="{Binding ElementName=SearchText}" Placement="Bottom" IsTopmost="False">
+                        <materialDesign:Card>
+                            <materialDesign:Card.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.MergedDictionaries>
+                                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml"/>
+                                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml"/>
+                                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml"/>
+                                    </ResourceDictionary.MergedDictionaries>
+                                </ResourceDictionary>
+                            </materialDesign:Card.Resources>
+                            <ListBox x:Name="AutoCompleteList" FontSize="15" Width="350" Height="300"/>
+                        </materialDesign:Card>
+                    </controls1:NonTopmostPopup>
+                </Grid>
+
+                <StackPanel x:Name="LoadProgress" Margin="25 0 0 0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <ProgressBar Grid.Row="0" Height="25" Width="25" Opacity=".56" Style="{StaticResource MaterialDesignCircularProgressBar}" IsIndeterminate="True"/>
+                    <TextBlock Text="데이터 로딩중..." Margin="8 0 0 0" VerticalAlignment="Center" Foreground="White"/>
+                </StackPanel>
+                    
+                <!--<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <ToggleButton Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked">
+                        <ToggleButton.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
+                                    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml"/>
+                                </ResourceDictionary.MergedDictionaries>
+                            </ResourceDictionary>
+                        </ToggleButton.Resources>
+                    </ToggleButton>
+                    <TextBlock Text="  썸네일 뷰" Foreground="White" Margin="0 0 24 0">
+                        <TextBlock.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
+                                    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml"/>
+                                </ResourceDictionary.MergedDictionaries>
+                            </ResourceDictionary>
+                        </TextBlock.Resources>
+                    </TextBlock>
+                </StackPanel>-->
+            </Grid>
+
+            <Grid x:Name="SearchListView"  Grid.Row="1" Grid.Column="1" Margin="10">
+
+                <Grid.Resources>
+                    <Style x:Key="TextBlockStyleKey" TargetType="{x:Type TextBlock}">
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        <Setter Property="Margin" Value="5 0 0 0" />
+                    </Style>
+                </Grid.Resources>
+
+                <DataGrid x:Name="ResultList" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Items}" CanUserSortColumns="True" IsReadOnly="True" AutoGenerateColumns="False"
+                  SelectionMode="Extended" SelectionUnit="FullRow" IsSynchronizedWithCurrentItem="True" BorderThickness="1" MouseDoubleClick="ResultList_MouseDoubleClick"
+                  CanUserAddRows="False" materialDesign:DataGridAssist.CellPadding="4 2 2 2" Background="#181818" materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
+                    <DataGrid.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <materialDesign:DataGridTextColumn  Binding="{Binding 번호}" Width="59" Header="번호" SortDirection="Descending" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <materialDesign:DataGridTextColumn  Binding="{Binding 클래스}" Width="122" Header="클래스" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <materialDesign:DataGridTextColumn  Binding="{Binding 제목}" Width="322" Header="제목" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <materialDesign:DataGridTextColumn  Binding="{Binding 답글}" Width="38" Header="답글" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <materialDesign:DataGridTextColumn  Binding="{Binding 닉네임}" Width="90" Header="닉네임" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <materialDesign:DataGridTextColumn  Binding="{Binding 아이디}" Width="90" Header="아이디" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <materialDesign:DataGridTextColumn  Binding="{Binding 추천수}" Width="76" Header="추천수" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <materialDesign:DataGridTextColumn  Binding="{Binding 조회수}" Width="76" Header="조회수" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                        <materialDesign:DataGridTextColumn  Binding="{Binding 날짜}" Width="165" Header="날짜" ElementStyle="{StaticResource TextBlockStyleKey}"
+                                                           EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnPopupEditingStyle}"/>
+                    </DataGrid.Columns>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Height" Value="25"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="Background" Value="Gray"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.CellStyle>
+                </DataGrid>
+            </Grid>
+
+            <Grid x:Name="ThumbnailPanel" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
+                <!--Visibility="Collapsed"-->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ScrollViewer x:Name="ScrollViewer">
+                    <controls1:FallsPanel x:Name="SearchMaterialPanel"/>
+                </ScrollViewer>
+
+                <Grid Grid.Row="1" Grid.Column="1" Background="#232323" Height="35" x:Name="PagerGrid">
+                    <Border HorizontalAlignment="Center" CornerRadius="2" BorderThickness="0" BorderBrush="#717171" x:Name="PagerBorder">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <StackPanel.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.MergedDictionaries>
+                                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+                                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                                    </ResourceDictionary.MergedDictionaries>
+                                </ResourceDictionary>
+                            </StackPanel.Resources>
+
+                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="LeftLeft" Click="PageFunction_Click" Margin="0 0 2 0">
+                                <materialDesign:PackIcon Kind="ChevronDoubleLeft" Height="28" Width="28" Foreground="#717171"/>
+                            </Button>
+                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="Left" Click="PageFunction_Click" Margin="0 0 2 0">
+                                <materialDesign:PackIcon Kind="ChevronLeft" Height="28" Width="28" Foreground="#717171"/>
+                            </Button>
+
+                            <StackPanel x:Name="PageNumberPanel" Orientation="Horizontal">
+                                <Button Tag="0" Margin="0 0 2 0" BorderBrush="#363636" Background="#808080" BorderThickness="1 0 0 0" Foreground="#171717" Content="1"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="1" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="2"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="2" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="3"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="3" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="4"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="4" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="5"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="5" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="6"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="6" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="7"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="7" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="8"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="8" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="9"  MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                                <Button Tag="9" Margin="0 0 2 0" BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Foreground="#717171" Content="10" MinWidth="35" FontSize="15" Click="PageNumber_Click"/>
+                            </StackPanel>
+
+                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 0 0" Tag="Right" Click="PageFunction_Click" Margin="0 0 2 0">
+                                <materialDesign:PackIcon Kind="ChevronRight" Height="28" Width="28" Foreground="#717171"/>
+                            </Button>
+                            <Button BorderBrush="#363636" Background="#303030" BorderThickness="1 0 1 0" Tag="RightRight" Click="PageFunction_Click" Margin="0 0 2 0">
+                                <materialDesign:PackIcon Kind="ChevronDoubleRight" Height="28" Width="28" Foreground="#717171"/>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+    </materialDesign:DialogHost>
 </Window>

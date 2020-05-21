@@ -144,7 +144,7 @@ namespace GalleryExplorer
         //bool opened = false;
         private void UserControl_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (downloaded_article.ImagesLink.Count == 1)
+            if (downloaded_article == null || downloaded_article.ImagesLink.Count == 1)
                 return;
             image_index = (image_index + 1) % downloaded_article.ImagesLink.Count;
 

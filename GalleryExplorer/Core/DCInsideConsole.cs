@@ -294,7 +294,7 @@ namespace GalleryExplorer.Core
             switch (args[0])
             {
                 case "1":
-                    DCInsideArchive.Instance.Load(@"툴갤 아카이브-index.json");
+                    DCInsideArchive.Instance.Load(@"툴갤 아카이브.json");
                     break;
 
                 case "2":
@@ -314,6 +314,20 @@ namespace GalleryExplorer.Core
                     {
                         var query = DCInsideArchiveQueryHelper.to_linear(DCInsideArchiveQueryHelper.make_tree("CommentAuthorIp[182.224, 14.37]"));
                         DCInsideArchive.Instance.Query.Query(query).Save();
+                    }
+                    break;
+
+                case "5":
+                    DCInsideArchiveIndex.Instance.Build();
+                    break;
+
+                case "6":
+                    DCInsideArchiveIndex.Instance.Load("툴갤 아카이브");
+                    break;
+
+                case "7":
+                    {
+                        DCInsideArchiveIndexDatabase.Instance.Build();
                     }
                     break;
             }

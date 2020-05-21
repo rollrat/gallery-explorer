@@ -168,7 +168,7 @@
                         </ResourceDictionary>
                     </ListBox.Resources>
 
-                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="New">
+                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="New" IsEnabled="False">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="새로 만들기" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
                         </ListBoxItem.ToolTip>
@@ -224,7 +224,7 @@
                         </StackPanel>
                     </ListBoxItem>
 
-                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Console">
+                    <ListBoxItem PreviewMouseUp="StackPanel_MouseDown" Tag="Console" IsEnabled="False">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="콘솔" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
                         </ListBoxItem.ToolTip>
@@ -242,7 +242,7 @@
                         </StackPanel>
                     </ListBoxItem>
 
-                    <ListBoxItem x:Name="ArchiveButton" PreviewMouseUp="StackPanel_MouseDown" Tag="Archive" IsEnabled="False">
+                    <ListBoxItem x:Name="ArchiveButton" PreviewMouseUp="StackPanel_MouseDown" Tag="Archive">
                         <ListBoxItem.ToolTip>
                             <ToolTip Content="아카이브" Placement="RelativePoint" PlacementRectangle="45,3,0,0" HasDropShadow="True"/>
                         </ListBoxItem.ToolTip>

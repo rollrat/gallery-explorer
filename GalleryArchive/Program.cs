@@ -89,10 +89,12 @@ namespace GalleryArchive
                         Console.WriteLine("BodyContainsSimple: 글 내용에 단어 포함(HTML 전체)");
                         Console.WriteLine("BodyContainsHard: 글 내용에 단어 포함");
                         Console.WriteLine("TitleContains: 제목에 단어 포함");
-                        //Console.WriteLine("ContentAuthorNick: 작성자 닉네임");
-                        //Console.WriteLine("ContentAuthorIp: 작성자 아이피");
-                        //Console.WriteLine("ContentAuthorId: 작성자 아이디");
-                        //Console.WriteLine("ContentAuthorType: 작성자 종류(0: 유동, 1:반고정, 2:고정)");
+#if DEBUG
+                        Console.WriteLine("ContentAuthorNick: 작성자 닉네임");
+                        Console.WriteLine("ContentAuthorIp: 작성자 아이피");
+                        Console.WriteLine("ContentAuthorId: 작성자 아이디");
+                        Console.WriteLine("ContentAuthorType: 작성자 종류(0: 유동, 1:반고정, 2:고정)");
+#endif
                         Console.WriteLine("ContentHasComment: 최소 댓글 개수");
                         Console.WriteLine("ContentHasImage: 최소 이미지 개수");
                         Console.WriteLine("ContentViews: 최소 조회수");
@@ -102,9 +104,11 @@ namespace GalleryArchive
                         Console.WriteLine("댓글");
                         Console.WriteLine("CommentContainsSimple: 댓글 내용에 단어 포함(HTML 전체)");
                         Console.WriteLine("CommentContainsHard: 댓글 내용에 단어 포함");
-                        //Console.WriteLine("CommentAuthorNick: 댓글 작성자 닉네임");
-                        //Console.WriteLine("CommentAuthorIp: 댓글 작성자 아이피");
-                        //Console.WriteLine("CommentAuthorId: 댓글 작성자 아이디");
+#if DEBUG
+                        Console.WriteLine("CommentAuthorNick: 댓글 작성자 닉네임");
+                        Console.WriteLine("CommentAuthorIp: 댓글 작성자 아이피");
+                        Console.WriteLine("CommentAuthorId: 댓글 작성자 아이디");
+#endif
                         Console.WriteLine("");
                         Console.WriteLine("댓글검색 전용");
                         Console.WriteLine("CommentAuthorType: 지원안함");

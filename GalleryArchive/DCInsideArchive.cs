@@ -469,10 +469,12 @@ namespace GalleryExplorer.Core
         {
             {"contentcontainssimple",     DCInsideArchiveQueryTokenType.ContentContainsSimple},
             {"contentcontainshard",       DCInsideArchiveQueryTokenType.ContentContainsHard},
-            //{"contentauthornick",         DCInsideArchiveQueryTokenType.ContentAuthorNick},
-            //{"contentauthorip",           DCInsideArchiveQueryTokenType.ContentAuthorIp},
-            //{"contentauthorid",           DCInsideArchiveQueryTokenType.ContentAuthorId},
-            //{"contentauthortype",         DCInsideArchiveQueryTokenType.ContentAuthorType},
+#if DEBUG
+            {"contentauthornick",         DCInsideArchiveQueryTokenType.ContentAuthorNick},
+            {"contentauthorip",           DCInsideArchiveQueryTokenType.ContentAuthorIp},
+            {"contentauthorid",           DCInsideArchiveQueryTokenType.ContentAuthorId},
+            {"contentauthortype",         DCInsideArchiveQueryTokenType.ContentAuthorType},
+#endif
             {"contenthascomment",         DCInsideArchiveQueryTokenType.ContentHasComment},
             {"contenthasimage",           DCInsideArchiveQueryTokenType.ContentHasImage},
             {"contentviews",              DCInsideArchiveQueryTokenType.ContentViews},
@@ -483,10 +485,12 @@ namespace GalleryExplorer.Core
             {"titlecontains",             DCInsideArchiveQueryTokenType.TitleContains},
             {"commentcontainssimple",     DCInsideArchiveQueryTokenType.CommentContainsSimple},
             {"commentcontainshard",       DCInsideArchiveQueryTokenType.CommentContainsHard},
-            //{"commentauthornick",         DCInsideArchiveQueryTokenType.CommentAuthorNick},
-            //{"commentauthorip",           DCInsideArchiveQueryTokenType.CommentAuthorIp},
-            //{"commentauthorid",           DCInsideArchiveQueryTokenType.CommentAuthorId},
-            //{"commentauthortype",         DCInsideArchiveQueryTokenType.CommentAuthorType},
+#if DEBUG
+            {"commentauthornick",         DCInsideArchiveQueryTokenType.CommentAuthorNick},
+            {"commentauthorip",           DCInsideArchiveQueryTokenType.CommentAuthorIp},
+            {"commentauthorid",           DCInsideArchiveQueryTokenType.CommentAuthorId},
+            {"commentauthortype",         DCInsideArchiveQueryTokenType.CommentAuthorType},
+#endif
             {"commentisdccon",            DCInsideArchiveQueryTokenType.CommentIsDCCon},
             {"commentisvoice",            DCInsideArchiveQueryTokenType.CommentIsVoice},
         };

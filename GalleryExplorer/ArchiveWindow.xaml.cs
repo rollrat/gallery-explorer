@@ -108,7 +108,7 @@ namespace GalleryExplorer
                         dd[y]++;
                     }));
 
-                    var rr = dd.Where(x => x.Value == aa.Count).Take(100).ToList();
+                    var rr = dd.Where(x => x.Value == aa.Count).Take(20).ToList();
                     rx = article.Query("no IN(" + string.Join(",", rr.Select(x => x.Key)) + ")");
                 });
 

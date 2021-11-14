@@ -1,6 +1,10 @@
 # Gallery Explorer
 
 ![](Img/1.png)
+![](Img/s1.gif)
+![](Img/s2.gif)
+![](Img/s3.gif)
+![](Img/s4.gif)
 
 Crawls the posts and Reconstructs them in a new form.
 

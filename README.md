@@ -5,6 +5,7 @@
 ![](Img/s2.gif)
 ![](Img/s3.gif)
 ![](Img/s4.gif)
+![](Img/s6.gif)
 
 Crawls the posts and Reconstructs them in a new form.
 
